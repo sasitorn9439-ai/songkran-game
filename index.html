@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>สงกรานต์ปลอดภัย 💦</title>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600;700;900&family=Kanit:wght@400;700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--gold:#FFD700;--gold2:#FFA500;--teal:#00C9FF;--teal2:#0077B6;--deep:#020B2D;--water:#90E0EF;--white:#fff;--red:#FF4757;--green:#2ED573;--orange:#FF6B35;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Prompt',sans-serif;background:var(--deep);min-height:100vh;overflow-x:hidden;}
+.bg-mesh{position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 80% 50% at 20% 20%,rgba(0,180,216,.12) 0%,transparent 60%),radial-gradient(ellipse 60% 80% at 80% 80%,rgba(0,119,182,.15) 0%,transparent 60%),radial-gradient(ellipse 40% 40% at 50% 50%,rgba(255,215,0,.04) 0%,transparent 70%);}
+.bg-drops{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+.drop{position:absolute;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:rgba(0,180,216,.06);animation:floatDrop linear infinite;}
+@keyframes floatDrop{0%{transform:translateY(110vh) rotate(0deg);opacity:0;}10%{opacity:1;}90%{opacity:1;}100%{transform:translateY(-10vh) rotate(360deg);opacity:0;}}
+.wrap{position:relative;z-index:1;max-width:700px;margin:0 auto;padding:20px 16px;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.screen{width:100%;display:none;animation:screenIn .5s cubic-bezier(.34,1.56,.64,1);}
+.screen.active{display:block;}
+@keyframes screenIn{from{opacity:0;transform:translateY(28px) scale(.96);}to{opacity:1;transform:none;}}
+.logo-block{text-align:center;margin-bottom:24px;}
+.logo-splash{font-size:64px;display:block;animation:bounce 2s ease infinite;filter:drop-shadow(0 0 24px rgba(0,201,255,.7));}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+.logo-title{font-family:'Kanit',sans-serif;font-size:clamp(24px,6vw,42px);font-weight:900;background:linear-gradient(135deg,var(--gold),var(--orange),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1;margin-top:6px;}
+.logo-sub{color:var(--water);font-size:13px;margin-top:5px;opacity:.75;}
+.card{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(0,201,255,.2);border-radius:24px;padding:26px 22px;backdrop-filter:blur(20px);box-shadow:0 24px 64px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.08);}
+.av-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0 18px;}
+.av-btn{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border-radius:16px;border:2px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);cursor:pointer;padding:6px 4px;transition:all .25s cubic-bezier(.34,1.56,.64,1);}
+.av-btn:hover{transform:translateY(-4px) scale(1.06);border-color:var(--teal);background:rgba(0,201,255,.1);}
+.av-btn.sel{border-color:var(--gold);background:rgba(255,215,0,.15);transform:translateY(-4px) scale(1.08);box-shadow:0 8px 24px rgba(255,215,0,.3);}
+.av-emoji{font-size:34px;line-height:1;}
+.av-name{font-size:10px;color:var(--water);opacity:.8;}
+.lbl{font-size:12px;color:var(--water);opacity:.75;margin-bottom:6px;display:block;letter-spacing:.5px;}
+.emp-input{width:100%;padding:14px 18px;background:rgba(255,255,255,.06);border:1.5px solid rgba(0,201,255,.25);border-radius:12px;color:white;font-family:'Prompt',sans-serif;font-size:16px;font-weight:700;letter-spacing:2px;outline:none;transition:all .25s;text-align:center;}
+.emp-input::placeholder{color:rgba(255,255,255,.2);font-weight:400;letter-spacing:1px;font-size:14px;}
+.emp-input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,201,255,.15);}
+.btn-p{width:100%;padding:15px;border:none;border-radius:14px;color:white;font-family:'Prompt',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all .25s;background:linear-gradient(135deg,var(--teal),var(--teal2));box-shadow:0 8px 24px rgba(0,201,255,.3);margin-top:8px;}
+.btn-p:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(0,201,255,.45);}
+.btn-p:disabled{opacity:.5;cursor:default;transform:none;}
+.btn-g{padding:10px 24px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.05);border-radius:12px;color:var(--water);font-family:'Prompt',sans-serif;font-size:13px;cursor:pointer;transition:all .25s;}
+.btn-g:hover{background:rgba(255,255,255,.1);}
+.btn-gold{padding:14px 44px;border:none;border-radius:14px;color:#1a0a00;font-family:'Kanit',sans-serif;font-size:16px;font-weight:900;cursor:pointer;transition:all .25s;background:linear-gradient(135deg,var(--gold),var(--gold2));box-shadow:0 8px 24px rgba(255,215,0,.35);}
+.btn-gold:hover{transform:translateY(-3px);box-shadow:0 12px 36px rgba(255,215,0,.5);}
+.err{margin-top:11px;padding:11px 15px;background:rgba(255,71,87,.12);border:1px solid rgba(255,71,87,.3);border-radius:11px;color:#ffa8b0;font-size:13px;display:none;}
+.err.show{display:block;animation:fadeIn .3s;}
+.sep{height:1px;background:rgba(255,255,255,.07);margin:14px 0;}
+.score-bar{width:100%;display:flex;align-items:center;gap:9px;margin-bottom:14px;padding:10px 14px;background:rgba(255,255,255,.05);border:1px solid rgba(0,201,255,.15);border-radius:16px;backdrop-filter:blur(10px);}
+.sb-av{font-size:30px;filter:drop-shadow(0 0 8px rgba(255,215,0,.5));flex-shrink:0;}
+.sb-name{font-size:12px;font-weight:700;color:var(--gold);letter-spacing:.5px;line-height:1.2;}
+.sb-id{font-size:10px;color:var(--water);opacity:.55;}
+.sb-space{flex:1;}
+.sb-st{text-align:center;}
+.sb-sv{font-size:19px;font-weight:700;color:var(--gold);line-height:1;}
+.sb-sl{font-size:9px;color:var(--water);opacity:.55;}
+.pt{width:100%;height:6px;background:rgba(255,255,255,.08);border-radius:99px;margin-bottom:18px;overflow:hidden;}
+.pf{height:100%;background:linear-gradient(90deg,var(--teal),var(--gold));border-radius:99px;transition:width .5s cubic-bezier(.4,0,.2,1);box-shadow:0 0 12px rgba(0,201,255,.6);}
+.qnum{font-size:11px;color:var(--teal);text-transform:uppercase;letter-spacing:2px;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.qnum::after{content:'';flex:1;height:1px;background:rgba(0,201,255,.2);}
+.cat-b{display:inline-block;padding:3px 11px;border-radius:99px;font-size:11px;font-weight:700;margin-bottom:13px;}
+.qtext{font-size:clamp(15px,3.5vw,19px);font-weight:600;color:var(--white);line-height:1.65;margin-bottom:18px;}
+.opts{display:flex;flex-direction:column;gap:8px;}
+.opt{width:100%;padding:12px 15px;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.09);border-radius:12px;color:var(--white);font-family:'Prompt',sans-serif;font-size:14px;text-align:left;cursor:pointer;transition:all .22s;display:flex;align-items:center;gap:10px;position:relative;overflow:hidden;}
+.opt::before{content:'';position:absolute;inset:0;background:var(--teal);opacity:0;transition:opacity .22s;}
+.opt:hover:not(:disabled)::before{opacity:.07;}
+.opt:hover:not(:disabled){border-color:var(--teal);transform:translateX(4px);}
+.opt-l{width:27px;height:27px;border-radius:7px;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0;position:relative;z-index:1;transition:background .22s;}
+.opt span:last-child{position:relative;z-index:1;}
+.opt.correct{background:rgba(46,213,115,.15);border-color:var(--green);animation:pGreen .5s;}
+.opt.correct .opt-l{background:var(--green);color:#fff;}
+.opt.wrong{background:rgba(255,71,87,.15);border-color:var(--red);animation:shake .4s;}
+.opt.wrong .opt-l{background:var(--red);color:#fff;}
+.opt:disabled{cursor:default;}
+@keyframes pGreen{0%,100%{transform:scale(1)}50%{transform:scale(1.02)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.fb{margin-top:12px;padding:13px 15px;border-radius:12px;font-size:13px;line-height:1.7;display:none;animation:fadeIn .4s;}
+.fb.show{display:block;}
+.fb.ok{background:rgba(46,213,115,.1);border:1px solid rgba(46,213,115,.3);color:#a8f5c0;}
+.fb.bad{background:rgba(255,71,87,.1);border:1px solid rgba(255,71,87,.3);color:#ffa8b0;}
+.fb-t{font-weight:700;font-size:15px;margin-bottom:3px;}
+.nxt{width:100%;margin-top:12px;padding:14px;background:linear-gradient(135deg,var(--teal),var(--teal2));border:none;border-radius:12px;color:white;font-family:'Prompt',sans-serif;font-size:15px;font-weight:700;cursor:pointer;display:none;transition:all .25s;box-shadow:0 8px 24px rgba(0,201,255,.3);}
+.nxt.show{display:block;animation:fadeIn .4s;}
+.nxt:hover{transform:translateY(-2px);}
+.res-hero{text-align:center;margin-bottom:18px;}
+.res-av{font-size:80px;display:block;animation:bounce 1.5s ease infinite;filter:drop-shadow(0 0 30px rgba(255,215,0,.6));}
+.res-grade{font-family:'Kanit',sans-serif;font-size:clamp(24px,5vw,38px);font-weight:900;background:linear-gradient(135deg,var(--gold),var(--orange));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin:8px 0 3px;}
+.res-big{font-family:'Kanit',sans-serif;font-size:70px;font-weight:900;color:var(--gold);line-height:1;text-shadow:0 0 40px rgba(255,215,0,.5);}
+.res-msg{color:var(--water);font-size:13px;line-height:1.8;margin:8px 0 16px;white-space:pre-line;}
+.res-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-bottom:16px;}
+.rg{padding:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);border-radius:13px;text-align:center;}
+.rg-v{font-size:22px;font-weight:700;}
+.rg-l{font-size:10px;color:var(--water);opacity:.65;margin-top:2px;}
+.res-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+.tabs{display:flex;gap:4px;background:rgba(255,255,255,.05);border-radius:12px;padding:4px;margin-bottom:16px;}
+.tab{flex:1;padding:8px;border:none;border-radius:9px;background:transparent;color:rgba(255,255,255,.4);font-family:'Prompt',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;}
+.tab.active{background:rgba(0,201,255,.2);color:var(--teal);}
+
+/* LEADERBOARD */
+.lb-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.lb-title{font-family:'Kanit',sans-serif;font-size:21px;font-weight:900;background:linear-gradient(135deg,var(--gold),var(--orange));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.lb-live{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--green);}
+.lb-dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 1.5s ease infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.3)}}
+.lb-list{display:flex;flex-direction:column;gap:7px;max-height:480px;overflow-y:auto;}
+.lb-list::-webkit-scrollbar{width:4px;}
+.lb-list::-webkit-scrollbar-thumb{background:rgba(0,201,255,.3);border-radius:99px;}
+.lb-item{display:flex;align-items:center;gap:11px;padding:11px 15px;border-radius:15px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);position:relative;overflow:hidden;transition:all .3s;}
+.lb-item.me{border-color:rgba(255,215,0,.4);background:rgba(255,215,0,.08);}
+.lb-item.r1{background:linear-gradient(135deg,rgba(255,215,0,.15),rgba(255,165,0,.08));border-color:rgba(255,215,0,.5);}
+.lb-item.r2{background:linear-gradient(135deg,rgba(192,192,192,.12),rgba(150,150,150,.06));border-color:rgba(192,192,192,.35);}
+.lb-item.r3{background:linear-gradient(135deg,rgba(205,127,50,.12),rgba(180,100,30,.06));border-color:rgba(205,127,50,.35);}
+.lb-item.new-entry{animation:newEntry .6s ease;}
+@keyframes newEntry{0%{opacity:0;transform:translateX(-20px)}100%{opacity:1;transform:none}}
+.lb-rank{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Kanit',sans-serif;font-size:13px;font-weight:900;flex-shrink:0;}
+.r1 .lb-rank{background:linear-gradient(135deg,#FFD700,#FFA500);color:#3d2000;}
+.r2 .lb-rank{background:linear-gradient(135deg,#C0C0C0,#A0A0A0);color:#1a1a1a;}
+.r3 .lb-rank{background:linear-gradient(135deg,#CD7F32,#B8650E);color:#fff;}
+.lb-rank.nr{background:rgba(255,255,255,.08);color:rgba(255,255,255,.45);font-size:12px;}
+.lb-av{font-size:28px;flex-shrink:0;}
+.lb-info{flex:1;min-width:0;}
+.lb-name{font-size:14px;font-weight:700;color:var(--white);letter-spacing:.5px;}
+.lb-sub{font-size:11px;color:var(--water);opacity:.55;}
+.lb-sc{font-family:'Kanit',sans-serif;font-size:22px;font-weight:900;color:var(--gold);}
+.lb-me-badge{position:absolute;top:7px;right:7px;font-size:10px;padding:2px 7px;border-radius:99px;background:rgba(255,215,0,.2);color:var(--gold);font-weight:700;}
+.lb-empty{text-align:center;padding:28px;color:rgba(255,255,255,.3);font-size:14px;}
+.lb-loading{text-align:center;padding:22px;color:var(--water);opacity:.6;font-size:14px;}
+.lb-count{font-size:11px;color:var(--water);opacity:.5;text-align:center;margin-top:10px;}
+
+/* ALREADY PLAYED */
+.ap-score-box{background:rgba(0,201,255,.08);border:1px solid rgba(0,201,255,.2);border-radius:16px;padding:18px;text-align:center;margin-bottom:14px;}
+.ap-id-badge{display:inline-block;padding:6px 18px;background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.3);border-radius:99px;color:var(--gold);font-size:16px;font-weight:700;letter-spacing:2px;margin-bottom:12px;}
+
+/* EFFECTS */
+.splash-ov{position:fixed;inset:0;z-index:100;pointer-events:none;display:flex;align-items:center;justify-content:center;font-size:90px;opacity:0;transition:opacity .3s;}
+.splash-ov.show{opacity:1;}
+.stars-c{position:fixed;inset:0;pointer-events:none;z-index:50;overflow:hidden;}
+.star-p{position:absolute;animation:starFly 1s ease forwards;opacity:0;font-size:22px;}
+@keyframes starFly{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(0)}}
+.tip-bar{padding:10px 15px;background:rgba(255,215,0,.07);border:1px solid rgba(255,215,0,.18);border-radius:11px;color:rgba(255,215,0,.75);font-size:12px;text-align:center;margin-top:12px;}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+</style>
+</head>
+<body>
+<div class="bg-mesh"></div>
+<div class="bg-drops" id="bgDrops"></div>
+<div class="stars-c" id="starsC"></div>
+<div class="splash-ov" id="splashOv"></div>
+<div class="wrap">
+
+<!-- LOGIN -->
+<div class="screen active" id="sLogin">
+  <div class="logo-block">
+    <span class="logo-splash">💦</span>
+    <div class="logo-title">สงกรานต์ปลอดภัย</div>
+    <div class="logo-sub">ทดสอบความรู้ความปลอดภัยช่วงเทศกาลสงกรานต์</div>
+  </div>
+  <div class="card">
+    <div style="text-align:center;margin-bottom:4px">
+      <span style="font-size:38px">🪪</span>
+      <div style="font-family:Kanit;font-size:21px;font-weight:900;color:var(--gold);margin-top:4px">เข้าสู่ระบบ</div>
+      <div style="color:var(--water);font-size:12px;margin-top:4px;opacity:.75">กรุณากรอกข้อมูลก่อนเริ่มเล่น</div>
+    </div>
+    <div class="sep"></div>
+    <label class="lbl">รหัสพนักงาน</label>
+    <input class="emp-input" id="empInput" type="text" maxlength="12" placeholder="เช่น EMP001"
+      autocomplete="off" oninput="clearErr()" onkeydown="if(event.key==='Enter')doLogin()"/>
+    <div style="margin-top:18px;margin-bottom:6px">
+      <label class="lbl">เลือกตัวละครอวตาร ✨</label>
+    </div>
+    <div class="av-grid" id="avGrid"></div>
+    <button class="btn-p" id="loginBtn" onclick="doLogin()">▶ เริ่มเล่นเกม</button>
+    <div class="err" id="errBox"></div>
+    <div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.06);text-align:center;color:rgba(255,255,255,.2);font-size:11px">
+      แต่ละรหัสพนักงานสามารถเล่นได้เพียง 1 ครั้งเท่านั้น
+    </div>
+  </div>
+</div>
+
+<!-- ALREADY PLAYED -->
+<div class="screen" id="sPlayed">
+  <div class="logo-block" style="margin-bottom:16px">
+    <span class="logo-splash" style="font-size:48px">💦</span>
+    <div class="logo-title" style="font-size:26px">สงกรานต์ปลอดภัย</div>
+  </div>
+  <div class="card" style="text-align:center">
+    <span style="font-size:60px;display:block;margin-bottom:10px">✅</span>
+    <div style="font-family:Kanit;font-size:22px;font-weight:900;color:var(--gold);margin-bottom:6px">คุณเล่นแล้ว!</div>
+    <div class="ap-id-badge" id="apId">EMP001</div>
+    <div style="color:var(--water);font-size:13px;line-height:1.8;margin-bottom:14px">
+      รหัสพนักงานนี้ได้ทำแบบทดสอบไปแล้ว<br>แต่ละรหัสเล่นได้เพียง <strong style="color:var(--gold)">1 ครั้ง</strong> เท่านั้น
+    </div>
+    <div class="ap-score-box">
+      <span style="font-size:52px;display:block;margin-bottom:6px" id="apAv">🌊</span>
+      <div style="font-family:Kanit;font-size:40px;font-weight:900;color:var(--gold);line-height:1" id="apSc">0</div>
+      <div style="font-size:13px;color:var(--water);opacity:.7;margin-top:2px">คะแนน</div>
+      <div style="font-size:11px;color:var(--water);opacity:.5;margin-top:4px" id="apDate"></div>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+      <button class="btn-g" onclick="backToLogin()">🔄 เปลี่ยนรหัส</button>
+      <button class="btn-p" style="width:auto;padding:10px 22px;margin-top:0" onclick="showS('sLb');loadLb('lbListS')">🏆 ดูอันดับ</button>
+    </div>
+  </div>
+</div>
+
+<!-- GAME -->
+<div class="screen" id="sGame">
+  <div class="score-bar">
+    <div class="sb-av" id="sbAv">🌊</div>
+    <div><div class="sb-name" id="sbName">EMP</div><div class="sb-id" id="sbId"></div></div>
+    <div class="sb-space"></div>
+    <div class="sb-st"><div class="sb-sv" id="sbSc">0</div><div class="sb-sl">คะแนน</div></div>
+    <div class="sb-st"><div class="sb-sv" id="sbQn">1/10</div><div class="sb-sl">ข้อที่</div></div>
+    <div class="sb-st"><div class="sb-sv" id="sbOk" style="color:var(--green)">0</div><div class="sb-sl">ถูก</div></div>
+    <div class="sb-st"><div class="sb-sv" id="sbBd" style="color:var(--red)">0</div><div class="sb-sl">ผิด</div></div>
+  </div>
+  <div class="pt"><div class="pf" id="pf" style="width:0"></div></div>
+  <div class="card" id="qCard">
+    <div class="qnum" id="qNum">ข้อที่ 1</div>
+    <span class="cat-b" id="catB"></span>
+    <div class="qtext" id="qTxt"></div>
+    <div class="opts" id="optsG"></div>
+    <div class="fb" id="fbBox"></div>
+    <button class="nxt" id="nxtBtn" onclick="nextQ()">ข้อถัดไป →</button>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div class="screen" id="sResult">
+  <div class="res-hero">
+    <span class="res-av" id="resAv">🌊</span>
+    <div class="res-grade" id="resGrade"></div>
+    <div class="res-big" id="resSc">0</div>
+    <div class="res-msg" id="resMsg"></div>
+  </div>
+  <div class="tabs">
+    <button class="tab active" id="tSum" onclick="switchTab('sum')">📊 สรุปผล</button>
+    <button class="tab" id="tRank" onclick="switchTab('rank')">🏆 อันดับ Real-time</button>
+  </div>
+  <div id="tSumC">
+    <div class="card">
+      <div class="res-grid">
+        <div class="rg"><div class="rg-v" id="resOk" style="color:var(--green)">0</div><div class="rg-l">ตอบถูก</div></div>
+        <div class="rg"><div class="rg-v" id="resBd" style="color:var(--red)">0</div><div class="rg-l">ตอบผิด</div></div>
+        <div class="rg"><div class="rg-v" id="resPct" style="color:var(--gold)">0%</div><div class="rg-l">ความแม่นยำ</div></div>
+      </div>
+      <div class="res-actions">
+        <button class="btn-g" onclick="backToLogin()">🏠 หน้าหลัก</button>
+        <button class="btn-gold" onclick="switchTab('rank')">🏆 ดูอันดับ</button>
+      </div>
+    </div>
+    <div class="tip-bar">💡 แชร์ให้เพื่อนทดสอบด้วยกัน — สงกรานต์ปลอดภัย ทุกคนกลับบ้านได้!</div>
+  </div>
+  <div id="tRankC" style="display:none">
+    <div class="card">
+      <div class="lb-head">
+        <div class="lb-title">🏆 อันดับผู้เล่น</div>
+        <div class="lb-live"><div class="lb-dot"></div>LIVE</div>
+      </div>
+      <div class="lb-list" id="lbListR"><div class="lb-loading">⏳ กำลังโหลด...</div></div>
+      <div class="lb-count" id="lbCountR"></div>
+    </div>
+    <div style="margin-top:12px;text-align:center">
+      <button class="btn-g" onclick="backToLogin()">🏠 กลับหน้าหลัก</button>
+    </div>
+  </div>
+</div>
+
+<!-- LEADERBOARD STANDALONE -->
+<div class="screen" id="sLb">
+  <div class="logo-block" style="margin-bottom:16px">
+    <span style="font-size:48px;display:block;animation:bounce 2s ease infinite">🏆</span>
+    <div class="logo-title" style="font-size:24px">อันดับผู้เล่น</div>
+  </div>
+  <div class="card">
+    <div class="lb-head">
+      <div class="lb-title">🏆 Leaderboard</div>
+      <div class="lb-live"><div class="lb-dot"></div>LIVE</div>
+    </div>
+    <div class="lb-list" id="lbListS"><div class="lb-loading">⏳ กำลังโหลด...</div></div>
+    <div class="lb-count" id="lbCountS"></div>
+  </div>
+  <div style="margin-top:14px;text-align:center">
+    <button class="btn-g" onclick="backToLogin()">🏠 กลับหน้าหลัก</button>
+  </div>
+</div>
+
+</div><!-- /wrap -->
+
+<script>
+// ══ SUPABASE ══
+const SUPA_URL = 'https://iuxvvajeyqnnwwdyaudm.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml1eHZ2YWpleXFubnd3ZHlhdWRtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMyMDY1MDAsImV4cCI6MjA4ODc4MjUwMH0.AXDmUk3ovqECVRAypQtxufky8quH8Rc4uR8cGg3A8aU';
+const sb = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+// ══ REALTIME SUBSCRIPTIONS ══
+let realtimeSubs = {};
+
+function subscribeLeaderboard(listId, countId) {
+  // Unsubscribe existing if any
+  if (realtimeSubs[listId]) {
+    realtimeSubs[listId].unsubscribe();
+  }
+  // Initial load
+  loadLb(listId, countId);
+  // Subscribe to realtime changes
+  const channel = sb.channel('scores-' + listId)
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'scores' }, payload => {
+      loadLb(listId, countId);
+    })
+    .subscribe();
+  realtimeSubs[listId] = channel;
+}
+
+function unsubAll() {
+  Object.values(realtimeSubs).forEach(c => c.unsubscribe());
+  realtimeSubs = {};
+}
+
+// ══ AVATARS ══
+const AVS = [
+  {e:'🦁',n:'สิงห์'},{e:'🐯',n:'เสือ'},{e:'🦅',n:'อินทรี'},{e:'🐲',n:'มังกร'},
+  {e:'🦊',n:'จิ้งจอก'},{e:'🐺',n:'หมาป่า'},{e:'🦋',n:'ผีเสื้อ'},{e:'🐉',n:'นาค'},
+];
+let selAv = AVS[0];
+function buildAv() {
+  const g = document.getElementById('avGrid'); g.innerHTML = '';
+  AVS.forEach((av, i) => {
+    const b = document.createElement('button'); b.className = 'av-btn' + (i===0?' sel':'');
+    b.innerHTML = `<span class="av-emoji">${av.e}</span><span class="av-name">${av.n}</span>`;
+    b.onclick = () => { document.querySelectorAll('.av-btn').forEach(x=>x.classList.remove('sel')); b.classList.add('sel'); selAv=av; };
+    g.appendChild(b);
+  });
+}
+
+// ══ QUESTIONS ══
+const QS = [
+  {cat:"🚗 การขับขี่",col:"#FF6B35",q:"ระดับแอลกอฮอล์สูงสุดที่กฎหมายไทยกำหนดสำหรับผู้ขับขี่รถยนต์ทั่วไปคือเท่าไหร่?",opts:["20 มิลลิกรัมเปอร์เซ็นต์","50 มิลลิกรัมเปอร์เซ็นต์","80 มิลลิกรัมเปอร์เซ็นต์","100 มิลลิกรัมเปอร์เซ็นต์"],ok:1,fb:"✅ กฎหมายกำหนดไว้ที่ 50 มก.% หากเกินถือว่าเมาแล้วขับ มีโทษจำคุก 1 ปี หรือปรับสูงสุด 20,000 บาท"},
+  {cat:"🛵 จักรยานยนต์",col:"#00B4D8",q:"ข้อใดเป็นสาเหตุอันดับ 1 ของอุบัติเหตุในช่วงเทศกาลสงกรานต์?",opts:["สภาพถนนลื่น","การดื่มแล้วขับ","ง่วงหลับใน","โทรศัพท์ขณะขับ"],ok:1,fb:"✅ การดื่มแล้วขับคือสาเหตุอันดับ 1 ทำให้เกิดอุบัติเหตุกว่า 40% ในช่วงสงกรานต์"},
+  {cat:"💦 เล่นน้ำปลอดภัย",col:"#90E0EF",q:"เมื่อเล่นน้ำสงกรานต์บนท้องถนน ควรระวังอะไรมากที่สุด?",opts:["แดดร้อน","รถที่วิ่งผ่าน","น้ำสกปรก","เสียงดัง"],ok:1,fb:"✅ อย่าลุกล้ำถนนสาธารณะ ยืนบนทางเท้า เพราะทุกปีมีผู้เสียชีวิตจากรถชนขณะเล่นน้ำ"},
+  {cat:"🏊 การจมน้ำ",col:"#0077B6",q:"หากพบเห็นคนกำลังจมน้ำ ขั้นตอนแรกที่ถูกต้องที่สุดคืออะไร?",opts:["กระโดดลงน้ำไปช่วยทันที","ตะโกนขอความช่วยเหลือและโทร 1669","รอดูสถานการณ์ก่อน","วิ่งหาไม้มาช่วยก่อน"],ok:1,fb:"✅ ต้องโทร 1669 ก่อน อย่ากระโดดลงน้ำถ้าว่ายน้ำไม่เป็น"},
+  {cat:"🪖 หมวกกันน็อก",col:"#FFD700",q:"หมวกกันน็อกช่วยลดความเสี่ยงการบาดเจ็บที่ศีรษะได้กี่เปอร์เซ็นต์?",opts:["30%","50%","70%","มากกว่า 85%"],ok:3,fb:"✅ หมวกกันน็อกมาตรฐานลดความเสี่ยงเสียชีวิตได้มากกว่า 85% สวมทุกครั้งเสมอ!"},
+  {cat:"💊 ยาและการขับขี่",col:"#FF4D94",q:"ยาชนิดใดต่อไปนี้ที่ควรระวังก่อนขับขี่เพราะทำให้ง่วงนอน?",opts:["ยาแก้ปวดพาราเซตามอล","ยาแก้แพ้ (antihistamine)","วิตามินซี","ยาลดความดัน"],ok:1,fb:"✅ ยาแก้แพ้ antihistamine ทำให้ง่วงนอนมาก ควรหลีกเลี่ยงการขับขี่หลังรับประทาน"},
+  {cat:"🚗 การขับขี่",col:"#FF6B35",q:"ถ้าง่วงมากระหว่างเดินทางไกล สิ่งที่ควรทำดีที่สุดคืออะไร?",opts:["เปิดแอร์เย็นขึ้น","ดื่มกาแฟแล้วขับต่อ","จอดพักนอนหลับ 20-30 นาที","เปิดเพลงเสียงดัง"],ok:2,fb:"✅ พักนอนหลับสั้นๆ 20-30 นาที (Power Nap) คือวิธีที่ดีที่สุด"},
+  {cat:"💦 เล่นน้ำปลอดภัย",col:"#90E0EF",q:"ข้อใดเป็นพฤติกรรมที่ไม่ควรทำระหว่างเล่นน้ำสงกรานต์?",opts:["ใส่แว่นกันแดด","ราดน้ำใส่คนที่ขับรถผ่าน","ดื่มน้ำเยอะๆ","ทาครีมกันแดด"],ok:1,fb:"✅ ราดน้ำใส่ผู้ขับขี่อันตรายมาก อาจสูญเสียการควบคุมรถ"},
+  {cat:"🚑 การปฐมพยาบาล",col:"#44CC77",q:"เบอร์โทรศัพท์ฉุกเฉินสำหรับเรียกรถพยาบาลในไทยคือเบอร์อะไร?",opts:["191","199","1669","1554"],ok:2,fb:"✅ เบอร์ 1669 คือศูนย์นเรนทร กรมการแพทย์ฉุกเฉิน โทรฟรีตลอด 24 ชั่วโมง!"},
+  {cat:"🛵 จักรยานยนต์",col:"#00B4D8",q:"ในช่วงสงกรานต์ ยานพาหนะที่มีผู้เสียชีวิตสูงสุดในอุบัติเหตุคือยานพาหนะประเภทใด?",opts:["รถยนต์","รถกระบะ","รถจักรยานยนต์","รถบัส"],ok:2,fb:"✅ รถจักรยานยนต์คิดเป็น 80-85% ของผู้เสียชีวิตในช่วงสงกรานต์ทุกปี"},
+];
+
+// ══ STATE ══
+let curQ=0, score=0, okC=0, badC=0, answered=false, qOrder=[], empId='', curAv='🌊';
+
+// ══ DB FUNCTIONS ══
+async function checkPlayed(id) {
+  const { data } = await sb.from('scores').select('*').eq('emp_id', id).single();
+  return data;
+}
+async function saveScore(id, sc, ok, bad, av) {
+  const { error } = await sb.from('scores').upsert({
+    emp_id: id, avatar: av, score: sc, correct: ok, wrong: bad, played_at: new Date().toISOString()
+  }, { onConflict: 'emp_id' });
+  return !error;
+}
+async function getScores() {
+  const { data } = await sb.from('scores').select('*').order('score', { ascending: false }).limit(50);
+  return data || [];
+}
+
+// ══ SCREEN ══
+function showS(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function backToLogin() {
+  unsubAll(); empId = '';
+  document.getElementById('empInput').value = ''; clearErr(); showS('sLogin');
+}
+
+// ══ LOGIN ══
+function clearErr() { document.getElementById('errBox').className = 'err'; }
+function showErr(m) { const e = document.getElementById('errBox'); e.textContent = m; e.className = 'err show'; }
+
+async function doLogin() {
+  const id = document.getElementById('empInput').value.trim().toUpperCase();
+  if (!id) { showErr('⚠️ กรุณากรอกรหัสพนักงานก่อน'); return; }
+  if (id.length < 3) { showErr('⚠️ รหัสพนักงานต้องมีอย่างน้อย 3 ตัวอักษร'); return; }
+  const btn = document.getElementById('loginBtn');
+  btn.disabled = true; btn.textContent = '⏳ กำลังตรวจสอบ...';
+  const rec = await checkPlayed(id);
+  btn.disabled = false; btn.textContent = '▶ เริ่มเล่นเกม';
+  if (rec) { empId = id; showPlayed(rec); }
+  else { empId = id; curAv = selAv.e; startGame(); }
+}
+
+function showPlayed(rec) {
+  document.getElementById('apId').textContent = rec.emp_id;
+  document.getElementById('apAv').textContent = rec.avatar || '🌊';
+  document.getElementById('apSc').textContent = rec.score;
+  const d = new Date(rec.played_at).toLocaleDateString('th-TH', {year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+  document.getElementById('apDate').textContent = 'เล่นเมื่อ: ' + d;
+  showS('sPlayed');
+}
+
+// ══ GAME ══
+function startGame() {
+  curQ=0; score=0; okC=0; badC=0; answered=false;
+  qOrder = [...Array(QS.length).keys()].sort(() => Math.random() - .5);
+  document.getElementById('sbAv').textContent = curAv;
+  document.getElementById('sbName').textContent = empId;
+  document.getElementById('sbSc').textContent = '0';
+  document.getElementById('sbOk').textContent = '0';
+  document.getElementById('sbBd').textContent = '0';
+  showS('sGame'); renderQ();
+}
+
+function renderQ() {
+  if (curQ >= QS.length) { doResult(); return; }
+  answered = false;
+  const q = QS[qOrder[curQ]];
+  document.getElementById('pf').style.width = (curQ / QS.length * 100) + '%';
+  document.getElementById('qNum').textContent = `ข้อที่ ${curQ+1}`;
+  document.getElementById('sbQn').textContent = `${curQ+1}/${QS.length}`;
+  const cb = document.getElementById('catB');
+  cb.textContent = q.cat; cb.style.background = q.col+'22'; cb.style.color = q.col; cb.style.border = `1px solid ${q.col}44`;
+  document.getElementById('qTxt').textContent = q.q;
+  const g = document.getElementById('optsG'); g.innerHTML = '';
+  ['A','B','C','D'].forEach((l,i) => {
+    const b = document.createElement('button'); b.className = 'opt';
+    b.innerHTML = `<span class="opt-l">${l}</span><span>${q.opts[i]}</span>`;
+    b.onclick = () => pick(i, b); g.appendChild(b);
+  });
+  document.getElementById('fbBox').className = 'fb';
+  document.getElementById('fbBox').innerHTML = '';
+  document.getElementById('nxtBtn').className = 'nxt';
+  const c = document.getElementById('qCard');
+  c.style.animation = 'none'; c.offsetHeight; c.style.animation = 'screenIn .45s cubic-bezier(.34,1.56,.64,1)';
+}
+
+function pick(idx, btn) {
+  if (answered) return; answered = true;
+  const q = QS[qOrder[curQ]];
+  document.querySelectorAll('.opt').forEach(b => b.disabled = true);
+  const fb = document.getElementById('fbBox');
+  if (idx === q.ok) {
+    btn.classList.add('correct'); document.querySelectorAll('.opt')[q.ok].classList.add('correct');
+    score += 10; okC++;
+    document.getElementById('sbSc').textContent = score;
+    document.getElementById('sbOk').textContent = okC;
+    fb.className = 'fb ok show'; fb.innerHTML = `<div class="fb-t">🎉 ถูกต้อง! +10 คะแนน</div>${q.fb}`;
+    spawnFx(true); splash('💦');
+  } else {
+    btn.classList.add('wrong'); document.querySelectorAll('.opt')[q.ok].classList.add('correct');
+    badC++; document.getElementById('sbBd').textContent = badC;
+    fb.className = 'fb bad show'; fb.innerHTML = `<div class="fb-t">❌ ยังไม่ถูกต้อง</div>${q.fb}`;
+    spawnFx(false);
+  }
+  document.getElementById('nxtBtn').className = 'nxt show';
+}
+function nextQ() { curQ++; renderQ(); }
+
+// ══ RESULT ══
+async function doResult() {
+  if (empId) await saveScore(empId, score, okC, badC, curAv);
+  const pct = Math.round(okC / QS.length * 100);
+  let grade, msg;
+  if (pct>=90){grade='🏆 ยอดเยี่ยมมาก!';msg='คุณเป็นผู้เชี่ยวชาญด้านความปลอดภัยสงกรานต์ตัวจริง!\nช่วยแชร์ความรู้นี้ให้เพื่อน ๆ ด้วยนะ 💙';}
+  else if(pct>=70){grade='🎊 ดีมาก!';msg='คุณมีความรู้ด้านความปลอดภัยดีมาก!\nศึกษาเพิ่มเติมเพื่อให้ปลอดภัยยิ่งขึ้น 🛡️';}
+  else if(pct>=50){grade='💪 พอใช้ได้!';msg='คุณรู้เรื่องความปลอดภัยพอสมควร\nยังมีจุดที่ต้องเรียนรู้เพิ่มเติมอีกนิดหน่อย 📚';}
+  else{grade='📖 ต้องเรียนรู้เพิ่ม!';msg='ความปลอดภัยสำคัญมาก ขอบคุณที่ทำแบบทดสอบนะ 🙏';}
+  document.getElementById('resAv').textContent = curAv;
+  document.getElementById('resGrade').textContent = grade;
+  document.getElementById('resSc').textContent = score;
+  document.getElementById('resMsg').textContent = msg;
+  document.getElementById('resOk').textContent = okC;
+  document.getElementById('resBd').textContent = badC;
+  document.getElementById('resPct').textContent = pct + '%';
+  switchTab('sum'); showS('sResult');
+  for (let i=0;i<20;i++) setTimeout(() => spawnFx(true), i*80);
+}
+
+// ══ TABS ══
+function switchTab(t) {
+  document.getElementById('tSumC').style.display = t==='sum'?'block':'none';
+  document.getElementById('tRankC').style.display = t==='rank'?'block':'none';
+  document.getElementById('tSum').className = 'tab'+(t==='sum'?' active':'');
+  document.getElementById('tRank').className = 'tab'+(t==='rank'?' active':'');
+  if (t==='rank') subscribeLeaderboard('lbListR','lbCountR');
+}
+
+// ══ LEADERBOARD ══
+function rankIcon(n){return n===1?'🥇':n===2?'🥈':n===3?'🥉':n;}
+function rankCls(n){return n===1?'r1':n===2?'r2':n===3?'r3':'';}
+
+async function loadLb(listId, countId) {
+  const recs = await getScores();
+  const el = document.getElementById(listId);
+  if (!el) return;
+  if (!recs.length) {
+    el.innerHTML = '<div class="lb-empty">ยังไม่มีข้อมูลผู้เล่น<br><span style="font-size:32px;margin-top:8px;display:block">🌊</span></div>';
+    return;
+  }
+  el.innerHTML = '';
+  recs.forEach((r, i) => {
+    const rank = i+1, isMe = (r.emp_id === empId);
+    const d = new Date(r.played_at).toLocaleDateString('th-TH',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+    const div = document.createElement('div');
+    div.className = `lb-item ${rankCls(rank)} ${isMe?'me':''} new-entry`;
+    div.style.animationDelay = (i * 0.04) + 's';
+    div.innerHTML = `
+      <div class="lb-rank ${rank>3?'nr':''}">${rankIcon(rank)}</div>
+      <div class="lb-av">${r.avatar||'🌊'}</div>
+      <div class="lb-info">
+        <div class="lb-name">${r.emp_id}</div>
+        <div class="lb-sub">ถูก ${r.correct||0}/${QS.length} ข้อ · ${d}</div>
+      </div>
+      <div class="lb-sc">${r.score}</div>
+      ${isMe?'<div class="lb-me-badge">คุณ</div>':''}
+    `;
+    el.appendChild(div);
+  });
+  if (countId) {
+    const c = document.getElementById(countId);
+    if (c) c.textContent = `ผู้เล่นทั้งหมด ${recs.length} คน`;
+  }
+}
+
+// ══ EFFECTS ══
+function splash(e){const el=document.getElementById('splashOv');el.textContent=e;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),600);}
+function spawnFx(ok){
+  const c=document.getElementById('starsC');
+  const em=ok?['⭐','💦','✨','🎉','💫']:['😅','💧','🔥'];
+  for(let i=0;i<8;i++){
+    const s=document.createElement('div');s.className='star-p';
+    s.textContent=em[Math.floor(Math.random()*em.length)];
+    const x=Math.random()*window.innerWidth,y=Math.random()*window.innerHeight*.6+window.innerHeight*.2;
+    const dx=(Math.random()-.5)*220,dy=-(Math.random()*160+60);
+    s.style.cssText=`left:${x}px;top:${y}px;--dx:${dx}px;--dy:${dy}px;animation-delay:${Math.random()*.3}s;`;
+    c.appendChild(s);setTimeout(()=>s.remove(),1200);
+  }
+}
+function createDrops(){
+  const c=document.getElementById('bgDrops');
+  for(let i=0;i<15;i++){
+    const d=document.createElement('div');d.className='drop';
+    const sz=Math.random()*80+20;
+    d.style.cssText=`width:${sz}px;height:${sz*1.3}px;left:${Math.random()*100}%;animation-duration:${Math.random()*10+8}s;animation-delay:${Math.random()*10}s;`;
+    c.appendChild(d);
+  }
+}
+
+buildAv(); createDrops();
+</script>
+</body>
+</html>
