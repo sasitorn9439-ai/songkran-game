@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>สงกรานต์ปลอดภัย 💦</title>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;600;700;900&family=Kanit:wght@700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--gold:#FFD700;--gold2:#FFA500;--teal:#00C9FF;--teal2:#0077B6;--deep:#020B2D;--water:#90E0EF;--red:#FF4757;--green:#2ED573;--orange:#FF6B35;--purple:#A855F7;--track-bg:#0a1628;}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;font-family:'Prompt',sans-serif;background:var(--deep);color:#fff;overflow-x:hidden;}
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse 80% 60% at 20% 20%,rgba(0,180,216,.13) 0%,transparent 60%),
+    radial-gradient(ellipse 60% 80% at 80% 80%,rgba(0,119,182,.16) 0%,transparent 60%);}
+.wrap{position:relative;z-index:1;max-width:500px;margin:0 auto;padding:16px;
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+
+/* SCREENS */
+.screen{width:100%;display:none;animation:sIn .45s cubic-bezier(.34,1.56,.64,1);}
+.screen.active{display:flex;flex-direction:column;align-items:center;}
+@keyframes sIn{from{opacity:0;transform:translateY(20px) scale(.97)}to{opacity:1;transform:none}}
+
+/* LOGO */
+.logo{font-size:56px;animation:bounce 2s ease infinite;filter:drop-shadow(0 0 20px rgba(0,201,255,.7));}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+h1{font-family:'Kanit',sans-serif;font-size:clamp(22px,5vw,36px);font-weight:900;
+  background:linear-gradient(135deg,var(--gold),var(--orange),var(--teal));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  text-align:center;margin:8px 0 4px;}
+.sub{color:var(--water);font-size:12px;opacity:.75;text-align:center;margin-bottom:22px;}
+
+/* CARD */
+.card{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(0,201,255,.2);
+  border-radius:20px;padding:22px 18px;backdrop-filter:blur(20px);
+  box-shadow:0 20px 50px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.08);}
+
+/* ROLE BUTTONS */
+.role-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;margin-bottom:0;}
+.role-btn{padding:22px 14px;border:2px solid rgba(255,255,255,.1);border-radius:18px;
+  background:rgba(255,255,255,.05);cursor:pointer;transition:all .25s cubic-bezier(.34,1.56,.64,1);
+  display:flex;flex-direction:column;align-items:center;gap:8px;}
+.role-btn:hover{transform:translateY(-4px) scale(1.03);}
+.role-btn.player{border-color:rgba(0,201,255,.3);}
+.role-btn.player:hover{border-color:var(--teal);background:rgba(0,201,255,.1);box-shadow:0 8px 24px rgba(0,201,255,.25);}
+.role-btn.admin{border-color:rgba(168,85,247,.3);}
+.role-btn.admin:hover{border-color:var(--purple);background:rgba(168,85,247,.1);box-shadow:0 8px 24px rgba(168,85,247,.25);}
+.role-icon{font-size:40px;filter:drop-shadow(0 0 10px currentColor);}
+.role-title{font-family:'Kanit',sans-serif;font-size:16px;font-weight:900;}
+.role-btn.player .role-title{color:var(--teal);}
+.role-btn.admin .role-title{color:#c084fc;}
+.role-desc{font-size:10px;color:var(--water);opacity:.65;text-align:center;line-height:1.5;}
+
+/* INPUTS */
+.lbl{font-size:11px;color:var(--water);opacity:.7;margin-bottom:5px;display:block;letter-spacing:.5px;}
+.inp{width:100%;padding:13px 16px;background:rgba(255,255,255,.06);
+  border:1.5px solid rgba(0,201,255,.25);border-radius:11px;color:#fff;
+  font-family:'Kanit',sans-serif;font-size:26px;font-weight:900;letter-spacing:6px;
+  outline:none;transition:all .22s;text-align:center;}
+.inp::placeholder{color:rgba(255,255,255,.2);font-weight:400;letter-spacing:2px;font-size:14px;}
+.inp:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,201,255,.15);}
+.inp-pw{font-size:18px;letter-spacing:4px;}
+
+/* BUTTONS */
+.btn{width:100%;padding:14px;border:none;border-radius:12px;color:#fff;
+  font-family:'Prompt',sans-serif;font-size:15px;font-weight:700;cursor:pointer;
+  transition:all .22s;background:linear-gradient(135deg,var(--teal),var(--teal2));
+  box-shadow:0 6px 18px rgba(0,201,255,.3);margin-top:8px;}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(0,201,255,.45);}
+.btn:disabled{opacity:.5;cursor:default;transform:none;}
+.btn-purple{background:linear-gradient(135deg,var(--purple),#7c3aed);box-shadow:0 6px 18px rgba(168,85,247,.3);}
+.btn-purple:hover{box-shadow:0 10px 26px rgba(168,85,247,.45);}
+.btn-ghost{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:var(--water);box-shadow:none;}
+.btn-ghost:hover{background:rgba(255,255,255,.12);transform:none;}
+
+/* ERROR */
+.err{margin-top:9px;padding:10px 14px;background:rgba(255,71,87,.12);border:1px solid rgba(255,71,87,.3);
+  border-radius:10px;color:#ffa8b0;font-size:12px;display:none;text-align:center;}
+.err.show{display:block;animation:fadeIn .3s;}
+.sep{height:1px;background:rgba(255,255,255,.07);margin:12px 0;}
+
+/* AVATAR GRID */
+.av-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0 14px;}
+.av-btn{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:2px;border-radius:12px;border:2px solid rgba(255,255,255,.1);
+  background:rgba(255,255,255,.04);cursor:pointer;transition:all .2s cubic-bezier(.34,1.56,.64,1);}
+.av-btn:hover{transform:translateY(-3px) scale(1.05);border-color:var(--teal);}
+.av-btn.sel{border-color:var(--gold);background:rgba(255,215,0,.15);transform:translateY(-3px) scale(1.06);box-shadow:0 5px 16px rgba(255,215,0,.3);}
+.av-em{font-size:28px;line-height:1;}.av-nm{font-size:9px;color:var(--water);opacity:.8;}
+
+/* SCORE BAR */
+.score-bar{width:100%;display:flex;align-items:center;gap:8px;margin-bottom:12px;padding:9px 13px;
+  background:rgba(255,255,255,.05);border:1px solid rgba(0,201,255,.15);border-radius:14px;}
+.sb-av{font-size:26px;}.sb-info{flex:1;}
+.sb-name{font-size:11px;font-weight:700;color:var(--gold);}
+.sb-id{font-size:9px;color:var(--water);opacity:.55;}
+.sb-score{font-family:'Kanit',sans-serif;font-size:20px;font-weight:900;color:var(--gold);}
+.sb-qlabel{font-size:9px;color:var(--water);opacity:.55;text-align:right;}
+
+/* PROGRESS */
+.prog-wrap{width:100%;margin-bottom:14px;}
+.prog-track{width:100%;height:5px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--gold));border-radius:99px;transition:width .4s;box-shadow:0 0 10px rgba(0,201,255,.5);}
+.prog-label{display:flex;justify-content:space-between;font-size:10px;color:var(--water);opacity:.6;margin-top:4px;}
+
+/* QUESTION */
+.cat-badge{display:inline-block;padding:3px 10px;border-radius:99px;font-size:10px;font-weight:700;margin-bottom:10px;background:rgba(0,201,255,.15);color:var(--teal);border:1px solid rgba(0,201,255,.3);}
+.q-text{font-size:clamp(14px,3.5vw,17px);font-weight:600;line-height:1.65;margin-bottom:14px;
+  padding:14px;background:rgba(255,255,255,.05);border-radius:12px;border:1px solid rgba(255,255,255,.07);}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.opt{padding:13px 10px;border:none;border-radius:12px;color:#fff;font-family:'Prompt',sans-serif;
+  font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;
+  display:flex;flex-direction:column;align-items:center;gap:5px;min-height:72px;
+  justify-content:center;text-align:center;line-height:1.4;position:relative;overflow:hidden;}
+.opt::after{content:'';position:absolute;inset:0;background:#fff;opacity:0;transition:opacity .15s;}
+.opt:hover:not(:disabled)::after{opacity:.08;}
+.opt:disabled{cursor:default;}
+.opt.o0{background:linear-gradient(135deg,#E63946,#9b1a23);}
+.opt.o1{background:linear-gradient(135deg,#2196F3,#0a3d7a);}
+.opt.o2{background:linear-gradient(135deg,#FF9800,#7a4400);}
+.opt.o3{background:linear-gradient(135deg,#4CAF50,#1a4d1c);}
+.opt.correct{animation:cPop .5s cubic-bezier(.34,1.56,.64,1);box-shadow:0 0 24px rgba(46,213,115,.6);border:2px solid var(--green);}
+.opt.wrong{animation:cShake .4s;opacity:.5;border:2px solid var(--red);}
+.opt.show-correct{box-shadow:0 0 24px rgba(46,213,115,.6);border:2px solid var(--green);filter:brightness(1.2);}
+@keyframes cPop{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+@keyframes cShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.opt-icon{font-size:18px;}.opt-txt{font-size:11px;}
+.fb-bar{width:100%;margin-top:10px;padding:11px 14px;border-radius:11px;font-size:12px;line-height:1.6;display:none;}
+.fb-bar.ok{background:rgba(46,213,115,.12);border:1px solid rgba(46,213,115,.3);color:#a8f5c0;display:block;}
+.fb-bar.bad{background:rgba(255,71,87,.12);border:1px solid rgba(255,71,87,.3);color:#ffa8b0;display:block;}
+.fb-title{font-weight:700;font-size:13px;margin-bottom:2px;}
+.nxt{width:100%;margin-top:10px;padding:13px;background:linear-gradient(135deg,var(--teal),var(--teal2));
+  border:none;border-radius:11px;color:#fff;font-family:'Prompt',sans-serif;font-size:14px;font-weight:700;
+  cursor:pointer;display:none;transition:all .22s;box-shadow:0 6px 18px rgba(0,201,255,.3);}
+.nxt.show{display:block;animation:fadeIn .3s;}
+.nxt:hover{transform:translateY(-2px);}
+
+/* MINI TRACK */
+.mini-track{width:100%;background:rgba(0,0,0,.3);border-radius:14px;padding:10px 14px;
+  margin-bottom:14px;border:1px solid rgba(0,201,255,.15);}
+.mt-label{font-size:10px;color:var(--water);opacity:.6;margin-bottom:8px;display:flex;align-items:center;gap:5px;}
+.mt-live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.3)}}
+.mt-lane{display:flex;align-items:center;gap:6px;margin-bottom:5px;height:28px;}
+.mt-lane:last-child{margin-bottom:0;}
+.mt-track-bg{flex:1;height:8px;background:rgba(255,255,255,.08);border-radius:99px;position:relative;overflow:hidden;}
+.mt-fill{height:100%;border-radius:99px;transition:width .6s cubic-bezier(.4,0,.2,1);}
+.mt-runner{position:absolute;top:50%;transform:translateY(-50%);font-size:16px;transition:left .6s cubic-bezier(.4,0,.2,1);margin-left:-8px;}
+.mt-emp{font-size:10px;font-weight:700;width:46px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mt-score{font-family:'Kanit',sans-serif;font-size:12px;font-weight:700;color:var(--gold);width:32px;text-align:right;flex-shrink:0;}
+.mt-rank{font-size:11px;width:16px;flex-shrink:0;text-align:center;}
+
+/* ALREADY PLAYED */
+.ap-box{background:rgba(0,201,255,.08);border:1px solid rgba(0,201,255,.2);border-radius:14px;padding:16px;text-align:center;margin-bottom:12px;}
+.ap-id{display:inline-block;padding:5px 16px;background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.3);border-radius:99px;color:var(--gold);font-size:18px;font-weight:700;letter-spacing:4px;margin-bottom:10px;}
+
+/* FINISH */
+.fin-av{font-size:72px;display:block;animation:bounce 1.5s ease infinite;filter:drop-shadow(0 0 28px rgba(255,215,0,.6));}
+.fin-rank{font-family:'Kanit',sans-serif;font-size:72px;font-weight:900;color:var(--gold);line-height:1;text-shadow:0 0 40px rgba(255,215,0,.5);}
+.fin-score{font-family:'Kanit',sans-serif;font-size:24px;font-weight:900;color:var(--water);}
+.fin-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;margin:12px 0;}
+.fg{padding:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);border-radius:12px;text-align:center;}
+.fg-v{font-size:22px;font-weight:700;}.fg-l{font-size:9px;color:var(--water);opacity:.6;margin-top:2px;}
+
+/* ══ ADMIN STYLES ══ */
+.admin-wrap{position:relative;z-index:1;width:100%;max-width:1100px;margin:0 auto;padding:12px 16px;min-height:100vh;display:flex;flex-direction:column;gap:10px;}
+.topbar{display:flex;align-items:center;gap:10px;padding:10px 16px;background:rgba(255,255,255,.06);border:1px solid rgba(0,201,255,.15);border-radius:14px;}
+.topbar-logo{font-size:24px;}
+.topbar-title{font-family:'Kanit',sans-serif;font-size:17px;font-weight:900;background:linear-gradient(135deg,var(--gold),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.admin-badge{padding:3px 10px;background:rgba(168,85,247,.2);border:1px solid rgba(168,85,247,.4);border-radius:99px;font-size:10px;color:#c084fc;font-weight:700;}
+.tb-space{flex:1;}
+.tb-stats{display:flex;gap:14px;align-items:center;}
+.ts{text-align:center;}.ts-v{font-family:'Kanit',sans-serif;font-size:18px;font-weight:900;color:var(--gold);line-height:1;}.ts-l{font-size:9px;color:var(--water);opacity:.6;}
+.live-pill{display:flex;align-items:center;gap:5px;padding:3px 10px;background:rgba(46,213,115,.1);border:1px solid rgba(46,213,115,.3);border-radius:99px;}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 1.2s infinite;}
+.live-txt{font-size:10px;color:var(--green);font-weight:700;}
+.admin-main{display:grid;grid-template-columns:1fr 280px;gap:10px;flex:1;min-height:0;}
+@media(max-width:800px){.admin-main{grid-template-columns:1fr;}}
+.stadium{background:var(--track-bg);border:1px solid rgba(0,201,255,.15);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;}
+.stadium-hdr{padding:9px 14px;background:rgba(0,0,0,.3);border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:space-between;}
+.stadium-title{font-family:'Kanit',sans-serif;font-size:13px;font-weight:900;color:var(--gold);}
+.track-area{flex:1;padding:10px 14px;overflow-y:auto;display:flex;flex-direction:column;}
+.track-area::-webkit-scrollbar{width:3px;}
+.track-area::-webkit-scrollbar-thumb{background:rgba(0,201,255,.3);border-radius:99px;}
+.lane{display:flex;align-items:center;gap:8px;padding:4px 0;}
+.lane-rank{width:26px;flex-shrink:0;text-align:center;font-size:13px;}
+.lane-info{width:60px;flex-shrink:0;}
+.lane-emp{font-size:10px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.lane-pts{font-family:'Kanit',sans-serif;font-size:9px;color:var(--gold);}
+.lane-track{flex:1;height:34px;position:relative;background:rgba(255,255,255,.03);border-radius:8px;overflow:visible;}
+.track-surface{position:absolute;inset:0;border-radius:8px;background:repeating-linear-gradient(90deg,rgba(255,255,255,.03) 0px,rgba(255,255,255,.03) 1px,transparent 1px,transparent 40px);border:1px solid rgba(255,255,255,.05);}
+.track-fill{position:absolute;left:0;top:4px;bottom:4px;border-radius:6px;transition:width .8s cubic-bezier(.4,0,.2,1);}
+.finish-line{position:absolute;right:0;top:-4px;bottom:-4px;width:7px;background:repeating-linear-gradient(180deg,#fff 0px,#fff 4px,#000 4px,#000 8px);border-radius:0 6px 6px 0;opacity:.5;}
+.runner{position:absolute;top:50%;transform:translateY(-50%);font-size:20px;transition:left .8s cubic-bezier(.4,0,.2,1);z-index:10;margin-left:-10px;}
+.runner.finished{animation:dance .5s ease infinite alternate;}
+@keyframes dance{0%{transform:translateY(-60%)}100%{transform:translateY(-40%)}}
+.lane-sep{height:1px;background:rgba(255,255,255,.04);margin:0 0 0 94px;}
+.lane-prog{width:32px;flex-shrink:0;text-align:right;font-size:9px;}
+.lp-val{color:rgba(255,255,255,.4);}
+.lp-fin{color:var(--green);font-weight:700;}
+.sidebar-col{display:flex;flex-direction:column;gap:10px;}
+.lb-card{background:rgba(255,255,255,.06);border:1px solid rgba(0,201,255,.15);border-radius:16px;padding:13px;flex:1;overflow:hidden;display:flex;flex-direction:column;}
+.lb-card-title{font-family:'Kanit',sans-serif;font-size:13px;font-weight:900;background:linear-gradient(135deg,var(--gold),var(--orange));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:9px;}
+.lb-list{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:4px;}
+.lb-list::-webkit-scrollbar{width:3px;}
+.lb-list::-webkit-scrollbar-thumb{background:rgba(0,201,255,.3);border-radius:99px;}
+.lb-row{display:flex;align-items:center;gap:7px;padding:6px 9px;border-radius:9px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.05);transition:all .4s;}
+.lb-row.r1{background:linear-gradient(135deg,rgba(255,215,0,.15),rgba(255,165,0,.08));border-color:rgba(255,215,0,.4);}
+.lb-row.r2{background:rgba(192,192,192,.1);border-color:rgba(192,192,192,.25);}
+.lb-row.r3{background:rgba(205,127,50,.1);border-color:rgba(205,127,50,.25);}
+.lb-rn{width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'Kanit',sans-serif;font-size:10px;font-weight:900;flex-shrink:0;}
+.r1 .lb-rn{background:linear-gradient(135deg,#FFD700,#FFA500);color:#3d2000;}
+.r2 .lb-rn{background:linear-gradient(135deg,#C0C0C0,#909090);color:#111;}
+.r3 .lb-rn{background:linear-gradient(135deg,#CD7F32,#8B4513);color:#fff;}
+.lb-rn.nr{background:rgba(255,255,255,.07);color:rgba(255,255,255,.4);font-size:9px;}
+.lb-av{font-size:18px;flex-shrink:0;}
+.lb-nm{flex:1;min-width:0;}
+.lb-emp{font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.lb-sub{font-size:9px;color:var(--water);opacity:.55;}
+.lb-sc{font-family:'Kanit',sans-serif;font-size:15px;font-weight:900;color:var(--gold);}
+.fin-badge{font-size:8px;padding:1px 5px;border-radius:99px;background:rgba(46,213,115,.2);color:var(--green);font-weight:700;}
+.stats-card{background:rgba(255,255,255,.06);border:1px solid rgba(0,201,255,.15);border-radius:14px;padding:12px;}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.sg{padding:9px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.06);border-radius:10px;text-align:center;}
+.sg-v{font-family:'Kanit',sans-serif;font-size:18px;font-weight:900;line-height:1;}
+.sg-l{font-size:9px;color:var(--water);opacity:.6;margin-top:2px;}
+.admin-bottom{display:flex;align-items:center;gap:8px;padding:7px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:11px;}
+.bb-time{font-size:10px;color:rgba(255,255,255,.3);}
+.bb-space{flex:1;}
+.btn-sm{padding:6px 14px;border:none;border-radius:8px;color:#fff;font-family:'Prompt',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;background:rgba(0,201,255,.15);border:1px solid rgba(0,201,255,.3);}
+.btn-sm:hover{background:rgba(0,201,255,.3);}
+.btn-sm.red{background:rgba(255,71,87,.15);border-color:rgba(255,71,87,.3);}
+.btn-sm.red:hover{background:rgba(255,71,87,.35);}
+.podium-strip{display:none;padding:8px 14px;background:rgba(255,215,0,.06);border-top:1px solid rgba(255,215,0,.15);align-items:center;gap:10px;flex-wrap:wrap;}
+.podium-strip.show{display:flex;}
+.pod-item{display:flex;align-items:center;gap:5px;}
+.pod-sep{width:1px;height:28px;background:rgba(255,255,255,.1);}
+
+/* CONFETTI */
+.confetti-c{position:fixed;inset:0;pointer-events:none;z-index:999;overflow:hidden;}
+.cp{position:absolute;width:8px;height:8px;animation:cfFall linear forwards;}
+@keyframes cfFall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}
+
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="confetti-c" id="confettiC"></div>
+
+<!-- ══════════════════════════════════════════
+     PLAYER SECTION (max-width wrap)
+══════════════════════════════════════════ -->
+<div class="wrap" id="playerWrap">
+
+  <!-- HOME: เลือกบทบาท -->
+  <div class="screen active" id="sHome">
+    <div class="logo">💦</div>
+    <h1>สงกรานต์ปลอดภัย</h1>
+    <div class="sub">ทดสอบความรู้ความปลอดภัยช่วงสงกรานต์</div>
+    <div class="role-grid">
+      <button class="role-btn player" onclick="showScreen('sJoin')">
+        <span class="role-icon">🎮</span>
+        <div class="role-title">ผู้เล่น</div>
+        <div class="role-desc">เข้าร่วมทำแบบทดสอบและแข่งขันกับเพื่อน</div>
+      </button>
+      <button class="role-btn admin" onclick="showScreen('sAdminLogin')">
+        <span class="role-icon">📺</span>
+        <div class="role-title">Admin</div>
+        <div class="role-desc">ดูผลแบบ Real-time บนจอใหญ่</div>
+      </button>
+    </div>
+  </div>
+
+  <!-- ADMIN LOGIN -->
+  <div class="screen" id="sAdminLogin">
+    <div class="logo" style="font-size:44px">🔐</div>
+    <h1 style="font-size:26px">Admin Login</h1>
+    <div class="sub">ใส่รหัสผ่านเพื่อเข้าหน้า Dashboard</div>
+    <div class="card">
+      <label class="lbl">รหัสผ่าน Admin</label>
+      <input class="inp inp-pw" id="pwInp" type="password" maxlength="20" placeholder="••••••"
+        autocomplete="off" oninput="clearPwErr()" onkeydown="if(event.key==='Enter')doAdminLogin()"/>
+      <button class="btn btn-purple" onclick="doAdminLogin()" style="margin-top:12px">🔓 เข้าสู่ Dashboard</button>
+      <div class="err" id="pwErr"></div>
+      <button class="btn btn-ghost" onclick="showScreen('sHome')" style="margin-top:8px">← กลับ</button>
+    </div>
+  </div>
+
+  <!-- JOIN (PLAYER) -->
+  <div class="screen" id="sJoin">
+    <div class="logo" style="font-size:44px">💦</div>
+    <h1 style="font-size:26px">เข้าร่วมเกม</h1>
+    <div class="sub">กรอกรหัสพนักงานและเลือกตัวละคร</div>
+    <div class="card">
+      <label class="lbl">รหัสพนักงาน (4 หลัก)</label>
+      <input class="inp" id="empInp" type="tel" maxlength="4" placeholder="0000"
+        autocomplete="off" oninput="onEmpInput()" onkeydown="if(event.key==='Enter')doJoin()"/>
+      <div style="margin-top:14px;margin-bottom:4px"><label class="lbl">เลือกตัวละคร ✨</label></div>
+      <div class="av-grid" id="avGrid"></div>
+      <button class="btn" id="joinBtn" onclick="doJoin()" disabled>▶ เริ่มเล่นเกม</button>
+      <div class="err" id="errBox"></div>
+      <button class="btn btn-ghost" onclick="showScreen('sHome')" style="margin-top:6px">← กลับ</button>
+      <div class="sep"></div>
+      <div style="text-align:center;color:rgba(255,255,255,.2);font-size:10px">1 รหัส เล่นได้ 1 ครั้งเท่านั้น</div>
+    </div>
+  </div>
+
+  <!-- ALREADY PLAYED -->
+  <div class="screen" id="sPlayed">
+    <div class="logo" style="font-size:44px">💦</div>
+    <div class="card" style="text-align:center">
+      <span style="font-size:50px;display:block;margin-bottom:8px">✅</span>
+      <div style="font-family:Kanit;font-size:20px;font-weight:900;color:var(--gold);margin-bottom:8px">คุณเล่นแล้ว!</div>
+      <div class="ap-id" id="apId">0000</div>
+      <div class="ap-box">
+        <span style="font-size:44px;display:block;margin-bottom:6px" id="apAv">🦁</span>
+        <div style="font-family:Kanit;font-size:36px;font-weight:900;color:var(--gold)" id="apSc">0</div>
+        <div style="font-size:12px;color:var(--water);opacity:.7">คะแนน</div>
+        <div style="font-size:10px;color:var(--water);opacity:.5;margin-top:4px" id="apDate"></div>
+      </div>
+      <div style="color:var(--water);font-size:12px;line-height:1.8;margin-bottom:12px">รหัสนี้เล่นได้เพียง <strong style="color:var(--gold)">1 ครั้ง</strong> เท่านั้น</div>
+      <button class="btn" onclick="showScreen('sJoin');document.getElementById('empInp').value='';checkJoinBtn()">🔄 เปลี่ยนรหัส</button>
+    </div>
+  </div>
+
+  <!-- GAME -->
+  <div class="screen" id="sGame">
+    <div class="score-bar">
+      <div class="sb-av" id="sbAv">🦁</div>
+      <div class="sb-info"><div class="sb-name" id="sbName">—</div><div class="sb-id">กำลังเล่นอยู่</div></div>
+      <div style="text-align:right"><div class="sb-score" id="sbScore">0</div><div class="sb-qlabel" id="sbQL">ข้อ 1/10</div></div>
+    </div>
+    <div class="prog-wrap">
+      <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+      <div class="prog-label"><span id="pLabel">ข้อที่ 1 จาก 10</span><span id="pPct">0%</span></div>
+    </div>
+    <div class="mini-track">
+      <div class="mt-label"><div class="mt-live-dot"></div>อันดับ Real-time</div>
+      <div id="trackLanes"></div>
+    </div>
+    <div class="card" id="qCard">
+      <span class="cat-badge" id="catB"></span>
+      <div class="q-text" id="qTxt"></div>
+      <div class="opts" id="optsG"></div>
+      <div class="fb-bar" id="fbBar"></div>
+      <button class="nxt" id="nxtBtn" onclick="nextQ()">ข้อถัดไป →</button>
+    </div>
+  </div>
+
+  <!-- FINISH -->
+  <div class="screen" id="sFinish">
+    <span class="fin-av" id="finAv">🦁</span>
+    <div style="font-family:Kanit;font-size:16px;color:var(--water);margin-bottom:4px;text-align:center">อันดับของคุณ</div>
+    <div class="fin-rank" id="finRank">—</div>
+    <div class="fin-score" id="finScore">0 คะแนน</div>
+    <div class="fin-grid">
+      <div class="fg"><div class="fg-v" id="finOk" style="color:var(--green)">0</div><div class="fg-l">ตอบถูก</div></div>
+      <div class="fg"><div class="fg-v" id="finBd" style="color:var(--red)">0</div><div class="fg-l">ตอบผิด</div></div>
+    </div>
+    <div class="mini-track" style="margin-bottom:14px">
+      <div class="mt-label" style="font-size:11px;font-weight:700;color:var(--gold)">🏆 อันดับสุดท้าย</div>
+      <div id="finalLanes"></div>
+    </div>
+    <div style="padding:12px;background:rgba(0,201,255,.08);border:1px solid rgba(0,201,255,.2);border-radius:12px;color:var(--water);font-size:12px;text-align:center;line-height:1.8;width:100%">
+      💡 สงกรานต์ปลอดภัย ทุกคนกลับบ้านได้!
+    </div>
+    <button class="btn btn-ghost" onclick="showScreen('sHome')" style="margin-top:10px;width:100%">🏠 กลับหน้าหลัก</button>
+  </div>
+
+</div><!-- /playerWrap -->
+
+<!-- ══════════════════════════════════════════
+     ADMIN SECTION (full width)
+══════════════════════════════════════════ -->
+<div class="admin-wrap" id="adminWrap" style="display:none;">
+  <div class="topbar">
+    <span class="topbar-logo">💦</span>
+    <div class="topbar-title">สงกรานต์ปลอดภัย</div>
+    <span class="admin-badge">👑 ADMIN</span>
+    <div class="tb-space"></div>
+    <div class="tb-stats">
+      <div class="ts"><div class="ts-v" id="aTotal">0</div><div class="ts-l">ผู้เล่น</div></div>
+      <div class="ts"><div class="ts-v" id="aFinished" style="color:var(--green)">0</div><div class="ts-l">จบแล้ว</div></div>
+      <div class="ts"><div class="ts-v" id="aAvg" style="color:var(--teal)">0</div><div class="ts-l">คะแนนเฉลี่ย</div></div>
+      <div class="ts"><div class="ts-v" id="aTop" style="color:var(--orange)">0</div><div class="ts-l">สูงสุด</div></div>
+      <div class="live-pill"><div class="live-dot"></div><span class="live-txt">LIVE</span></div>
+    </div>
+    <button class="btn-sm" onclick="exitAdmin()" style="margin-left:8px">← ออก</button>
+  </div>
+  <div class="admin-main">
+    <div class="stadium">
+      <div class="stadium-hdr">
+        <div class="stadium-title">🏃 ลู่วิ่งแข่งขัน Real-time</div>
+        <div id="aLastUpdate" style="font-size:9px;color:rgba(255,255,255,.3)">—</div>
+      </div>
+      <div class="podium-strip" id="podiumStrip"></div>
+      <div class="track-area" id="aTrackArea">
+        <div style="text-align:center;padding:40px;color:rgba(255,255,255,.2);font-size:13px">⏳ รอผู้เล่นเข้าร่วม...</div>
+      </div>
+    </div>
+    <div class="sidebar-col">
+      <div class="lb-card">
+        <div class="lb-card-title">🏆 Leaderboard</div>
+        <div class="lb-list" id="aLbList"><div style="text-align:center;padding:20px;color:rgba(255,255,255,.3);font-size:11px">รอผู้เล่น...</div></div>
+      </div>
+      <div class="stats-card">
+        <div style="font-family:Kanit;font-size:12px;font-weight:900;color:var(--teal);margin-bottom:7px">📊 สถิติ</div>
+        <div class="stats-grid">
+          <div class="sg"><div class="sg-v" id="aSg1" style="color:var(--green)">0%</div><div class="sg-l">ตอบถูกเฉลี่ย</div></div>
+          <div class="sg"><div class="sg-v" id="aSg2" style="color:var(--gold)">0</div><div class="sg-l">รหัสที่ใช้</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="admin-bottom">
+    <div class="bb-time" id="aBbTime">—</div>
+    <div class="bb-space"></div>
+    <button class="btn-sm" onclick="adminRefresh()">🔄 รีเฟรช</button>
+    <button class="btn-sm red" onclick="confirmReset()">🗑️ ล้างข้อมูล</button>
+  </div>
+</div>
+
+<script>
+/* ══════════════ SUPABASE ══════════════ */
+const SURL='https://iuxvvajeyqnnwwdyaudm.supabase.co';
+const SKEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml1eHZ2YWpleXFubnd3ZHlhdWRtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMyMDY1MDAsImV4cCI6MjA4ODc4MjUwMH0.AXDmUk3ovqECVRAypQtxufky8quH8Rc4uR8cGg3A8aU';
+const sb=supabase.createClient(SURL,SKEY);
+
+const ADMIN_PASSWORD = 'admin1234'; // ← เปลี่ยนรหัสผ่านตรงนี้ได้เลยครับ
+
+/* ══════════════ DATA ══════════════ */
+const QS=[
+  {cat:'🚗',q:'ระดับแอลกอฮอล์สูงสุดที่กฎหมายไทยกำหนดสำหรับผู้ขับขี่รถยนต์คือเท่าไหร่?',opts:['20 มก.%','50 มก.%','80 มก.%','100 มก.%'],ok:1,fb:'กฎหมายกำหนดไว้ที่ 50 มก.% หากเกินถือว่าเมาแล้วขับ มีโทษจำคุก 1 ปี หรือปรับสูงสุด 20,000 บาท'},
+  {cat:'🛵',q:'สาเหตุอันดับ 1 ของอุบัติเหตุช่วงสงกรานต์คืออะไร?',opts:['ถนนลื่น','ดื่มแล้วขับ','ง่วงหลับใน','โทรศัพท์'],ok:1,fb:'การดื่มแล้วขับคือสาเหตุอันดับ 1 ทำให้เกิดอุบัติเหตุกว่า 40% ในช่วงสงกรานต์'},
+  {cat:'💦',q:'เมื่อเล่นน้ำสงกรานต์บนถนน ควรระวังอะไรมากที่สุด?',opts:['แดดร้อน','รถที่วิ่งผ่าน','น้ำสกปรก','เสียงดัง'],ok:1,fb:'อย่าลุกล้ำถนนสาธารณะ ยืนบนทางเท้า เพราะทุกปีมีผู้เสียชีวิตจากรถชนขณะเล่นน้ำ'},
+  {cat:'🏊',q:'พบคนจมน้ำ ขั้นตอนแรกที่ถูกต้องคืออะไร?',opts:['กระโดดช่วยทันที','โทร 1669 ขอความช่วยเหลือ','รอดูก่อน','วิ่งหาไม้'],ok:1,fb:'ต้องโทร 1669 ก่อน อย่ากระโดดลงน้ำถ้าว่ายน้ำไม่เป็น'},
+  {cat:'🪖',q:'หมวกกันน็อกลดความเสี่ยงบาดเจ็บที่ศีรษะได้กี่เปอร์เซ็นต์?',opts:['30%','50%','70%','มากกว่า 85%'],ok:3,fb:'หมวกกันน็อกมาตรฐานลดความเสี่ยงเสียชีวิตได้มากกว่า 85% สวมทุกครั้งเสมอ!'},
+  {cat:'💊',q:'ยาชนิดใดทำให้ง่วงนอน ควรระวังก่อนขับรถ?',opts:['พาราเซตามอล','ยาแก้แพ้','วิตามินซี','ยาลดความดัน'],ok:1,fb:'ยาแก้แพ้ antihistamine ทำให้ง่วงนอนมาก ควรหลีกเลี่ยงการขับขี่หลังรับประทาน'},
+  {cat:'🚗',q:'ง่วงมากระหว่างเดินทางไกล ควรทำอะไร?',opts:['เปิดแอร์เย็น','ดื่มกาแฟขับต่อ','จอดนอนหลับ 20-30 นาที','เปิดเพลงดัง'],ok:2,fb:'พักนอนหลับสั้นๆ 20-30 นาที (Power Nap) คือวิธีที่ดีที่สุด'},
+  {cat:'💦',q:'พฤติกรรมอันตรายระหว่างเล่นน้ำสงกรานต์คืออะไร?',opts:['ใส่แว่นกันแดด','ราดน้ำใส่คนขับรถ','ดื่มน้ำเยอะๆ','ทาครีมกันแดด'],ok:1,fb:'ราดน้ำใส่ผู้ขับขี่อันตรายมาก อาจสูญเสียการควบคุมรถ'},
+  {cat:'🚑',q:'เบอร์ฉุกเฉินเรียกรถพยาบาลในไทยคือเบอร์อะไร?',opts:['191','199','1669','1554'],ok:2,fb:'เบอร์ 1669 คือศูนย์นเรนทร กรมการแพทย์ฉุกเฉิน โทรฟรีตลอด 24 ชั่วโมง!'},
+  {cat:'🛵',q:'ยานพาหนะที่มีผู้เสียชีวิตสูงสุดในช่วงสงกรานต์คืออะไร?',opts:['รถยนต์','รถกระบะ','รถจักรยานยนต์','รถบัส'],ok:2,fb:'รถจักรยานยนต์คิดเป็น 80-85% ของผู้เสียชีวิตในช่วงสงกรานต์ทุกปี'},
+];
+const OPT_ICONS=['🔴','🔵','🟡','🟢'];
+const LANE_COLORS=['#e63946','#2196F3','#FF9800','#4CAF50','#A855F7','#FF6B35','#00B4D8','#c084fc','#2ED573','#FF4757'];
+const AVS=[{e:'🦁',n:'สิงห์'},{e:'🐯',n:'เสือ'},{e:'🦅',n:'อินทรี'},{e:'🐲',n:'มังกร'},{e:'🦊',n:'จิ้งจอก'},{e:'🐺',n:'หมาป่า'},{e:'🦋',n:'ผีเสื้อ'},{e:'🐉',n:'นาค'}];
+const MAX_SCORE=QS.length*1000;
+
+/* ══════════════ PLAYER STATE ══════════════ */
+let selAv=AVS[0],empId='',myScore=0,okC=0,badC=0,curQ=0,qOrder=[],answered=false,rtChannel=null;
+
+/* ══════════════ SCREEN UTILS ══════════════ */
+function showScreen(id){
+  document.querySelectorAll('#playerWrap .screen').forEach(s=>s.classList.remove('active'));
+  const el=document.getElementById(id);
+  if(el) el.classList.add('active');
+}
+
+/* ══════════════ ADMIN LOGIN ══════════════ */
+function clearPwErr(){document.getElementById('pwErr').className='err';}
+function doAdminLogin(){
+  const pw=document.getElementById('pwInp').value;
+  if(pw===ADMIN_PASSWORD){
+    document.getElementById('pwInp').value='';
+    document.getElementById('playerWrap').style.display='none';
+    document.getElementById('adminWrap').style.display='flex';
+    initAdmin();
+  } else {
+    const e=document.getElementById('pwErr');e.textContent='⚠️ รหัสผ่านไม่ถูกต้อง';e.className='err show';
+  }
+}
+function exitAdmin(){
+  document.getElementById('adminWrap').style.display='none';
+  document.getElementById('playerWrap').style.display='flex';
+  if(adminChannel) adminChannel.unsubscribe();
+  showScreen('sHome');
+}
+
+/* ══════════════ AVATAR ══════════════ */
+function buildAv(){
+  const g=document.getElementById('avGrid');g.innerHTML='';
+  AVS.forEach((av,i)=>{
+    const b=document.createElement('button');b.className='av-btn'+(i===0?' sel':'');
+    b.innerHTML='<span class="av-em">'+av.e+'</span><span class="av-nm">'+av.n+'</span>';
+    b.onclick=()=>{document.querySelectorAll('.av-btn').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');selAv=av;};
+    g.appendChild(b);
+  });
+}
+
+/* ══════════════ PLAYER INPUT ══════════════ */
+function onEmpInput(){
+  const v=document.getElementById('empInp').value.replace(/\D/g,'');
+  document.getElementById('empInp').value=v;
+  document.getElementById('joinBtn').disabled=v.length!==4;
+  document.getElementById('errBox').className='err';
+}
+function checkJoinBtn(){document.getElementById('joinBtn').disabled=document.getElementById('empInp').value.length!==4;}
+function showErr(m){const e=document.getElementById('errBox');e.textContent=m;e.className='err show';}
+
+/* ══════════════ JOIN ══════════════ */
+async function doJoin(){
+  const id=document.getElementById('empInp').value.trim();
+  if(id.length!==4||!/^\d{4}$/.test(id)){showErr('⚠️ กรุณากรอกรหัสพนักงาน 4 หลัก (ตัวเลขเท่านั้น)');return;}
+  const btn=document.getElementById('joinBtn');btn.disabled=true;btn.textContent='⏳ กำลังตรวจสอบ...';
+  const{data:existing}=await sb.from('game_results').select('*').eq('emp_id',id).single();
+  if(existing){
+    empId=id;
+    document.getElementById('apId').textContent=id;
+    document.getElementById('apAv').textContent=existing.avatar||'🦁';
+    document.getElementById('apSc').textContent=existing.score;
+    const d=new Date(existing.started_at).toLocaleDateString('th-TH',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+    document.getElementById('apDate').textContent='เล่นเมื่อ: '+d;
+    btn.disabled=false;btn.textContent='▶ เริ่มเล่นเกม';
+    showScreen('sPlayed');return;
+  }
+  const{error}=await sb.from('game_results').insert({emp_id:id,avatar:selAv.e,score:0,correct:0,wrong:0,finished:false});
+  btn.disabled=false;btn.textContent='▶ เริ่มเล่นเกม';
+  if(error){showErr('⚠️ เกิดข้อผิดพลาด ลองใหม่อีกครั้ง');return;}
+  empId=id;myScore=0;okC=0;badC=0;curQ=0;answered=false;
+  qOrder=[...Array(QS.length).keys()].sort(()=>Math.random()-.5);
+  document.getElementById('sbAv').textContent=selAv.e;
+  document.getElementById('sbName').textContent=id;
+  showScreen('sGame');
+  subscribeRT();renderQ();updateTrack();
+}
+
+/* ══════════════ REALTIME PLAYER ══════════════ */
+function subscribeRT(){
+  if(rtChannel)rtChannel.unsubscribe();
+  rtChannel=sb.channel('p-rt').on('postgres_changes',{event:'*',schema:'public',table:'game_results'},()=>updateTrack()).subscribe();
+}
+async function updateTrack(){
+  const{data}=await sb.from('game_results').select('emp_id,avatar,score,correct,finished').order('score',{ascending:false}).limit(10);
+  if(data) renderMiniTrack('trackLanes',data);
+}
+async function updateFinalTrack(){
+  const{data}=await sb.from('game_results').select('emp_id,avatar,score,correct,finished').order('score',{ascending:false}).limit(10);
+  if(!data)return;
+  renderMiniTrack('finalLanes',data);
+  const idx=data.findIndex(p=>p.emp_id===empId);
+  const rank=idx>=0?idx+1:data.length;
+  document.getElementById('finRank').textContent=rank<=3?['🥇','🥈','🥉'][rank-1]:rank;
+}
+
+function renderMiniTrack(containerId,data){
+  const el=document.getElementById(containerId);if(!el)return;el.innerHTML='';
+  const maxSc=Math.max(...data.map(d=>d.score),MAX_SCORE/10);
+  data.forEach((p,i)=>{
+    const pct=Math.max(2,(p.score/maxSc)*100);
+    const isMe=p.emp_id===empId;
+    const color=LANE_COLORS[i%LANE_COLORS.length];
+    const rank=i+1;
+    const rankIcon=rank===1?'🥇':rank===2?'🥈':rank===3?'🥉':'';
+    const empColor=isMe?'var(--gold)':'var(--water)';
+    const empWeight=isMe?'900':'700';
+    const empLabel=isMe?'⭐'+p.emp_id:p.emp_id;
+    const fillShadow=isMe?';box-shadow:0 0 8px '+color:'';
+    const scoreColor=isMe?'var(--gold)':'rgba(255,255,255,.6)';
+    const div=document.createElement('div');div.className='mt-lane';
+    div.innerHTML='<div class="mt-rank">'+(rankIcon||rank)+'</div>'
+      +'<div class="mt-emp" style="color:'+empColor+';font-weight:'+empWeight+'">'+empLabel+'</div>'
+      +'<div class="mt-track-bg"><div class="mt-fill" style="width:'+pct+'%;background:'+color+fillShadow+'"></div>'
+      +'<span class="mt-runner" style="left:'+pct+'%">'+(p.avatar||'🦁')+'</span></div>'
+      +'<div class="mt-score" style="color:'+scoreColor+'">'+p.score+'</div>';
+    el.appendChild(div);
+  });
+}
+
+/* ══════════════ GAME ══════════════ */
+function renderQ(){
+  if(curQ>=QS.length){finishGame();return;}
+  answered=false;
+  const q=QS[qOrder[curQ]];
+  const pct=Math.round(curQ/QS.length*100);
+  document.getElementById('progFill').style.width=pct+'%';
+  document.getElementById('pLabel').textContent='ข้อที่ '+(curQ+1)+' จาก '+QS.length;
+  document.getElementById('pPct').textContent=pct+'%';
+  document.getElementById('sbQL').textContent='ข้อ '+(curQ+1)+'/'+QS.length;
+  document.getElementById('catB').textContent=q.cat+' ข้อที่ '+(curQ+1);
+  document.getElementById('qTxt').textContent=q.q;
+  const g=document.getElementById('optsG');g.innerHTML='';
+  q.opts.forEach((opt,i)=>{
+    const b=document.createElement('button');b.className='opt o'+i;
+    b.innerHTML='<span class="opt-icon">'+OPT_ICONS[i]+'</span><span class="opt-txt">'+opt+'</span>';
+    b.onclick=()=>pick(i,b);g.appendChild(b);
+  });
+  document.getElementById('fbBar').className='fb-bar';
+  document.getElementById('fbBar').innerHTML='';
+  document.getElementById('nxtBtn').className='nxt';
+  const card=document.getElementById('qCard');card.style.animation='none';card.offsetHeight;card.style.animation='sIn .4s cubic-bezier(.34,1.56,.64,1)';
+}
+async function pick(idx,btn){
+  if(answered)return;answered=true;
+  const q=QS[qOrder[curQ]];
+  document.querySelectorAll('.opt').forEach(b=>b.disabled=true);
+  const isOk=idx===q.ok;
+  if(isOk){btn.classList.add('correct');okC++;myScore+=1000;}
+  else{btn.classList.add('wrong');document.querySelectorAll('.opt')[q.ok].classList.add('show-correct');badC++;}
+  await sb.from('game_results').update({score:myScore,correct:okC,wrong:badC}).eq('emp_id',empId);
+  document.getElementById('sbScore').textContent=myScore;
+  const fb=document.getElementById('fbBar');
+  fb.className='fb-bar '+(isOk?'ok':'bad');
+  fb.innerHTML='<div class="fb-title">'+(isOk?'🎉 ถูกต้อง! +1,000 คะแนน':'❌ ยังไม่ถูกต้อง')+'</div>'+q.fb;
+  document.getElementById('nxtBtn').className='nxt show';
+}
+function nextQ(){curQ++;renderQ();}
+async function finishGame(){
+  await sb.from('game_results').update({score:myScore,correct:okC,wrong:badC,finished:true,finished_at:new Date().toISOString()}).eq('emp_id',empId);
+  document.getElementById('finAv').textContent=selAv.e;
+  document.getElementById('finScore').textContent=myScore+' คะแนน';
+  document.getElementById('finOk').textContent=okC;
+  document.getElementById('finBd').textContent=badC;
+  showScreen('sFinish');
+  await updateFinalTrack();
+  if(rtChannel)rtChannel.unsubscribe();
+  rtChannel=sb.channel('p-final').on('postgres_changes',{event:'*',schema:'public',table:'game_results'},()=>updateFinalTrack()).subscribe();
+}
+
+/* ══════════════ ADMIN ══════════════ */
+let adminChannel=null,prevFinCount=0;
+function initAdmin(){
+  adminRefresh();
+  if(adminChannel)adminChannel.unsubscribe();
+  adminChannel=sb.channel('admin-rt').on('postgres_changes',{event:'*',schema:'public',table:'game_results'},()=>adminRefresh()).subscribe();
+  setInterval(adminRefresh,10000);
+}
+async function adminRefresh(){
+  const{data}=await sb.from('game_results').select('*').order('score',{ascending:false}).limit(10);
+  if(!data)return;
+  adminUpdateStats(data);
+  adminRenderTrack(data);
+  adminRenderLb(data);
+  adminRenderPodium(data);
+  checkConfetti(data);
+  const now=new Date().toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  document.getElementById('aBbTime').textContent='อัปเดต: '+now;
+  document.getElementById('aLastUpdate').textContent=now;
+}
+function adminUpdateStats(data){
+  const total=data.length,finished=data.filter(d=>d.finished).length;
+  const avg=total?Math.round(data.reduce((a,b)=>a+b.score,0)/total):0;
+  const top=total?Math.max(...data.map(d=>d.score)):0;
+  const tq=data.reduce((a,b)=>a+(b.correct||0)+(b.wrong||0),0);
+  const tok=data.reduce((a,b)=>a+(b.correct||0),0);
+  const acc=tq?Math.round(tok/tq*100):0;
+  document.getElementById('aTotal').textContent=total;
+  document.getElementById('aFinished').textContent=finished;
+  document.getElementById('aAvg').textContent=avg;
+  document.getElementById('aTop').textContent=top;
+  document.getElementById('aSg1').textContent=acc+'%';
+  document.getElementById('aSg2').textContent=total;
+}
+function adminRenderTrack(data){
+  const area=document.getElementById('aTrackArea');
+  if(!data.length){area.innerHTML='<div style="text-align:center;padding:40px;color:rgba(255,255,255,.2);font-size:13px">⏳ รอผู้เล่นเข้าร่วม...</div>';return;}
+  area.innerHTML='';
+  data.forEach((p,i)=>{
+    const pct=Math.min(97,Math.max(1,(p.score/MAX_SCORE)*95));
+    const rank=i+1;const color=LANE_COLORS[i%LANE_COLORS.length];
+    const rankIcon=rank===1?'🥇':rank===2?'🥈':rank===3?'🥉':rank;
+    const qDone=Math.min(QS.length,(p.correct||0)+(p.wrong||0));
+    const lane=document.createElement('div');lane.className='lane';
+    let cps='';for(let c=10;c<100;c+=10)cps+='<div style="position:absolute;top:0;bottom:0;left:'+c+'%;width:1px;background:rgba(255,255,255,.07)"></div>';
+    lane.innerHTML='<div class="lane-rank">'+rankIcon+'</div>'
+      +'<div class="lane-info"><div class="lane-emp" title="'+p.emp_id+'">'+p.emp_id+'</div><div class="lane-pts">'+p.score+' pts</div></div>'
+      +'<div class="lane-track"><div class="track-surface"></div>'+cps
+      +'<div class="track-fill" style="width:'+pct+'%;background:linear-gradient(90deg,'+color+'88,'+color+');box-shadow:0 0 8px '+color+'66"></div>'
+      +'<div class="finish-line"></div>'
+      +'<span class="runner'+(p.finished?' finished':'')+'" style="left:'+pct+'%">'+(p.avatar||'🦁')+'</span></div>'
+      +'<div class="lane-prog">'+(p.finished?'<div class="lp-fin">✅</div>':'<div class="lp-val">'+qDone+'/'+QS.length+'</div>')+'</div>';
+    area.appendChild(lane);
+    if(i<data.length-1){const sep=document.createElement('div');sep.className='lane-sep';area.appendChild(sep);}
+  });
+}
+function adminRenderLb(data){
+  const el=document.getElementById('aLbList');el.innerHTML='';
+  if(!data.length){el.innerHTML='<div style="text-align:center;padding:20px;color:rgba(255,255,255,.3);font-size:11px">รอผู้เล่น...</div>';return;}
+  data.forEach((p,i)=>{
+    const rank=i+1;const rc=rank===1?'r1':rank===2?'r2':rank===3?'r3':'';const rnc=rank<=3?'':'nr';
+    const icon=rank===1?'🥇':rank===2?'🥈':rank===3?'🥉':rank;
+    const acc=((p.correct||0)+(p.wrong||0))>0?Math.round((p.correct||0)/((p.correct||0)+(p.wrong||0))*100):0;
+    const d=document.createElement('div');d.className='lb-row '+rc;
+    d.innerHTML='<div class="lb-rn '+rnc+'">'+icon+'</div><div class="lb-av">'+(p.avatar||'🦁')+'</div>'
+      +'<div class="lb-nm"><div class="lb-emp">'+p.emp_id+(p.finished?' <span class="fin-badge">จบ</span>':'')+'</div>'
+      +'<div class="lb-sub">ถูก '+(p.correct||0)+'/'+QS.length+' · '+acc+'%</div></div>'
+      +'<div class="lb-sc">'+p.score+'</div>';
+    el.appendChild(d);
+  });
+}
+function adminRenderPodium(data){
+  const finished=data.filter(d=>d.finished).sort((a,b)=>b.score-a.score);
+  const strip=document.getElementById('podiumStrip');
+  if(!finished.length){strip.className='podium-strip';return;}
+  strip.className='podium-strip show';strip.innerHTML='<div style="font-size:10px;color:var(--gold);font-weight:700;flex-shrink:0">🏆 จบแล้ว:</div>';
+  finished.slice(0,3).forEach((p,i)=>{
+    const icons=['🥇','🥈','🥉'];
+    const div=document.createElement('div');div.className='pod-item';
+    div.innerHTML='<span>'+icons[i]+'</span><span style="font-size:18px">'+(p.avatar||'🦁')+'</span><div><div style="font-size:10px;font-weight:700;color:var(--gold)">'+p.emp_id+'</div><div style="font-size:9px;color:var(--water);opacity:.7">'+p.score+' pts</div></div>';
+    strip.appendChild(div);
+    if(i<Math.min(finished.length,3)-1){const sep=document.createElement('div');sep.className='pod-sep';strip.appendChild(sep);}
+  });
+}
+function checkConfetti(data){
+  const fc=data.filter(d=>d.finished).length;
+  if(fc>prevFinCount&&fc>0)spawnConfetti();
+  prevFinCount=fc;
+}
+function spawnConfetti(){
+  const c=document.getElementById('confettiC');
+  const cols=['#FFD700','#00C9FF','#FF6B35','#2ED573','#A855F7','#FF4757'];
+  for(let i=0;i<50;i++){
+    const p=document.createElement('div');p.className='cp';
+    const col=cols[Math.floor(Math.random()*cols.length)];
+    const x=Math.random()*100,dur=1.5+Math.random()*2,delay=Math.random()*.8,sz=6+Math.random()*7;
+    p.style.cssText='left:'+x+'%;background:'+col+';width:'+sz+'px;height:'+sz+'px;border-radius:'+(Math.random()>.5?'50%':'2px')+';animation-duration:'+dur+'s;animation-delay:'+delay+'s;';
+    c.appendChild(p);setTimeout(()=>p.remove(),(dur+delay)*1000+100);
+  }
+}
+async function confirmReset(){
+  if(!confirm('⚠️ ล้างข้อมูลผู้เล่นทั้งหมด?\nการกระทำนี้ไม่สามารถย้อนกลับได้'))return;
+  await sb.from('game_results').delete().neq('emp_id','__x__');
+  prevFinCount=0;adminRefresh();
+}
+
+/* ══════════════ INIT ══════════════ */
+document.addEventListener('DOMContentLoaded',()=>{buildAv();});
+</script>
+</body>
+</html>
