@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>สงกรานต์ปลอดภัย 💦</title>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;600;700;900&family=Kanit:wght@700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--gold:#FFD700;--gold2:#FFA500;--teal:#00C9FF;--teal2:#0077B6;--deep:#020B2D;--water:#90E0EF;--red:#FF4757;--green:#2ED573;--orange:#FF6B35;--purple:#A855F7;--track-bg:#0a1628;}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;font-family:'Prompt',sans-serif;background:var(--deep);color:#fff;overflow-x:hidden;}
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse 80% 60% at 20% 20%,rgba(0,180,216,.13) 0%,transparent 60%),
+    radial-gradient(ellipse 60% 80% at 80% 80%,rgba(0,119,182,.16) 0%,transparent 60%);}
+.wrap{position:relative;z-index:1;max-width:500px;margin:0 auto;padding:16px;
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+
+/* SCREENS */
+.screen{width:100%;display:none;animation:sIn .45s cubic-bezier(.34,1.56,.64,1);}
+.screen.active{display:flex;flex-direction:column;align-items:center;}
+@keyframes sIn{from{opacity:0;transform:translateY(20px) scale(.97)}to{opacity:1;transform:none}}
+
+/* LOGO */
+.logo{font-size:56px;animation:bounce 2s ease infinite;filter:drop-shadow(0 0 20px rgba(0,201,255,.7));}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+h1{font-family:'Kanit',sans-serif;font-size:clamp(22px,5vw,36px);font-weight:900;
+  background:linear-gradient(135deg,var(--gold),var(--orange),var(--teal));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  text-align:center;margin:8px 0 4px;}
+.sub{color:var(--water);font-size:12px;opacity:.75;text-align:center;margin-bottom:22px;}
+
+/* CARD */
+.card{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(0,201,255,.2);
+  border-radius:20px;padding:22px 18px;backdrop-filter:blur(20px);
+  box-shadow:0 20px 50px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.08);}
+
+/* ROLE BUTTONS */
+.role-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;margin-bottom:0;}
+.role-btn{padding:22px 14px;border:2px solid rgba(255,255,255,.1);border-radius:18px;
+  background:rgba(255,255,255,.05);cursor:pointer;transition:all .25s cubic-bezier(.34,1.56,.64,1);
+  display:flex;flex-direction:column;align-items:center;gap:8px;}
+.role-btn:hover{transform:translateY(-4px) scale(1.03);}
+.role-btn.player{border-color:rgba(0,201,255,.3);}
+.role-btn.player:hover{border-color:var(--teal);background:rgba(0,201,255,.1);box-shadow:0 8px 24px rgba(0,201,255,.25);}
+.role-btn.admin{border-color:rgba(168,85,247,.3);}
+.role-btn.admin:hover{border-color:var(--purple);background:rgba(168,85,247,.1);box-shadow:0 8px 24px rgba(168,85,247,.25);}
+.role-icon{font-size:40px;filter:drop-shadow(0 0 10px currentColor);}
+.role-title{font-family:'Kanit',sans-serif;font-size:16px;font-weight:900;}
+.role-btn.player .role-title{color:var(--teal);}
+.role-btn.admin .role-title{color:#c084fc;}
+.role-desc{font-size:10px;color:var(--water);opacity:.65;text-align:center;line-height:1.5;}
+
+/* INPUTS */
+.lbl{font-size:11px;color:var(--water);opacity:.7;margin-bottom:5px;display:block;letter-spacing:.5px;}
+.inp{width:100%;padding:13px 16px;background:rgba(255,255,255,.06);
+  border:1.5px solid rgba(0,201,255,.25);border-radius:11px;color:#fff;
+  font-family:'Kanit',sans-serif;font-size:26px;font-weight:900;letter-spacing:6px;
+  outline:none;transition:all .22s;text-align:center;}
+.inp::placeholder{color:rgba(255,255,255,.2);font-weight:400;letter-spacing:2px;font-size:14px;}
+.inp:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,201,255,.15);}
+.inp-pw{font-size:18px;letter-spacing:4px;}
+
+/* BUTTONS */
+.btn{width:100%;padding:14px;border:none;border-radius:12px;color:#fff;
+  font-family:'Prompt',sans-serif;font-size:15px;font-weight:700;cursor:pointer;
+  transition:all .22s;background:linear-gradient(135deg,var(--teal),var(--teal2));
+  box-shadow:0 6px 18px rgba(0,201,255,.3);margin-top:8px;}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(0,201,255,.45);}
+.btn:disabled{opacity:.5;cursor:default;transform:none;}
+.btn-purple{background:linear-gradient(135deg,var(--purple),#7c3aed);box-shadow:0 6px 18px rgba(168,85,247,.3);}
+.btn-purple:hover{box-shadow:0 10px 26px rgba(168,85,247,.45);}
+.btn-ghost{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:var(--water);box-shadow:none;}
+.btn-ghost:hover{background:rgba(255,255,255,.12);transform:none;}
+
+/* ERROR */
+.err{margin-top:9px;padding:10px 14px;background:rgba(255,71,87,.12);border:1px solid rgba(255,71,87,.3);
+  border-radius:10px;color:#ffa8b0;font-size:12px;display:none;text-align:center;}
+.err.show{display:block;animation:fadeIn .3s;}
+.sep{height:1px;background:rgba(255,255,255,.07);margin:12px 0;}
+
+/* AVATAR GRID */
+.av-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0 14px;}
+.av-btn{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:2px;border-radius:12px;border:2px solid rgba(255,255,255,.1);
+  background:rgba(255,255,255,.04);cursor:pointer;transition:all .2s cubic-bezier(.34,1.56,.64,1);}
+.av-btn:hover{transform:translateY(-3px) scale(1.05);border-color:var(--teal);}
+.av-btn.sel{border-color:var(--gold);background:rgba(255,215,0,.15);transform:translateY(-3px) scale(1.06);box-shadow:0 5px 16px rgba(255,215,0,.3);}
+.av-em{font-size:28px;line-height:1;}.av-nm{font-size:9px;color:var(--water);opacity:.8;}
+
+/* SCORE BAR */
+.score-bar{width:100%;display:flex;align-items:center;gap:8px;margin-bottom:12px;padding:9px 13px;
+  background:rgba(255,255,255,.05);border:1px solid rgba(0,201,255,.15);border-radius:14px;}
+.sb-av{font-size:26px;}.sb-info{flex:1;}
+.sb-name{font-size:11px;font-weight:700;color:var(--gold);}
+.sb-id{font-size:9px;color:var(--water);opacity:.55;}
+.sb-score{font-family:'Kanit',sans-serif;font-size:20px;font-weight:900;color:var(--gold);}
+.sb-qlabel{font-size:9px;color:var(--water);opacity:.55;text-align:right;}
+
+/* PROGRESS */
+.prog-wrap{width:100%;margin-bottom:14px;}
+.prog-track{width:100%;height:5px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--gold));border-radius:99px;transition:width .4s;box-shadow:0 0 10px rgba(0,201,255,.5);}
+.prog-label{display:flex;justify-content:space-between;font-size:10px;color:var(--water);opacity:.6;margin-top:4px;}
+
+/* QUESTION */
+.cat-badge{display:inline-block;padding:3px 10px;border-radius:99px;font-size:10px;font-weight:700;margin-bottom:10px;background:rgba(0,201,255,.15);color:var(--teal);border:1px solid rgba(0,201,255,.3);}
+.q-text{font-size:clamp(14px,3.5vw,17px);font-weight:600;line-height:1.65;margin-bottom:14px;
+  padding:14px;background:rgba(255,255,255,.05);border-radius:12px;border:1px solid rgba(255,255,255,.07);}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.opt{padding:13px 10px;border:none;border-radius:12px;color:#fff;font-family:'Prompt',sans-serif;
+  font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;
+  display:flex;flex-direction:column;align-items:center;gap:5px;min-height:72px;
+  justify-content:center;text-align:center;line-height:1.4;position:relative;overflow:hidden;}
+.opt::after{content:'';position:absolute;inset:0;background:#fff;opacity:0;transition:opacity .15s;}
+.opt:hover:not(:disabled)::after{opacity:.08;}
+.opt:disabled{cursor:default;}
+.opt.o0{background:linear-gradient(135deg,#E63946,#9b1a23);}
+.opt.o1{background:linear-gradient(135deg,#2196F3,#0a3d7a);}
+.opt.o2{background:linear-gradient(135deg,#FF9800,#7a4400);}
+.opt.o3{background:linear-gradient(135deg,#4CAF50,#1a4d1c);}
+.opt.correct{animation:cPop .5s cubic-bezier(.34,1.56,.64,1);box-shadow:0 0 24px rgba(46,213,115,.6);border:2px solid var(--green);}
+.opt.wrong{animation:cShake .4s;opacity:.5;border:2px solid var(--red);}
+.opt.show-correct{box-shadow:0 0 24px rgba(46,213,115,.6);border:2px solid var(--green);filter:brightness(1.2);}
+@keyframes cPop{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+@keyframes cShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.opt-icon{font-size:18px;}.opt-txt{font-size:11px;}
+.fb-bar{width:100%;margin-top:10px;padding:11px 14px;border-radius:11px;font-size:12px;line-height:1.6;display:none;}
+.fb-bar.ok{background:rgba(46,213,115,.12);border:1px solid rgba(46,213,115,.3);color:#a8f5c0;display:block;}
+.fb-bar.bad{background:rgba(255,71,87,.12);border:1px solid rgba(255,71,87,.3);color:#ffa8b0;display:block;}
+.fb-title{font-weight:700;font-size:13px;margin-bottom:2px;}
+.nxt{width:100%;margin-top:10px;padding:13px;background:linear-gradient(135deg,var(--teal),var(--teal2));
+  border:none;border-radius:11px;color:#fff;font-family:'Prompt',sans-serif;font-size:14px;font-weight:700;
+  cursor:pointer;display:none;transition:all .22s;box-shadow:0 6px 18px rgba(0,201,255,.3);}
+.nxt.show{display:block;animation:fadeIn .3s;}
+.nxt:hover{transform:translateY(-2px);}
+
+/* MINI TRACK */
+.mini-track{width:100%;background:rgba(0,0,0,.3);border-radius:14px;padding:10px 14px;
+  margin-bottom:14px;border:1px solid rgba(0,201,255,.15);}
+.mt-label{font-size:10px;color:var(--water);opacity:.6;margin-bottom:8px;display:flex;align-items:center;gap:5px;}
+.mt-live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.3)}}
+.mt-lane{display:flex;align-items:center;gap:6px;margin-bottom:5px;height:28px;}
+.mt-lane:last-child{margin-bottom:0;}
+.mt-track-bg{flex:1;height:8px;background:rgba(255,255,255,.08);border-radius:99px;position:relative;overflow:hidden;}
+.mt-fill{height:100%;border-radius:99px;transition:width .6s cubic-bezier(.4,0,.2,1);}
+.mt-runner{position:absolute;top:50%;transform:translateY(-50%);font-size:16px;transition:left .6s cubic-bezier(.4,0,.2,1);margin-left:-8px;}
+.mt-emp{font-size:10px;font-weight:700;width:46px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mt-score{font-family:'Kanit',sans-serif;font-size:12px;font-weight:700;color:var(--gold);width:32px;text-align:right;flex-shrink:0;}
+.mt-rank{font-size:11px;width:16px;flex-shrink:0;text-align:center;}
+
+/* ALREADY PLAYED */
+.ap-box{background:rgba(0,201,255,.08);border:1px solid rgba(0,201,255,.2);border-radius:14px;padding:16px;text-align:center;margin-bottom:12px;}
+.ap-id{display:inline-block;padding:5px 16px;background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.3);border-radius:99px;color:var(--gold);font-size:18px;font-weight:700;letter-spacing:4px;margin-bottom:10px;}
+
+/* FINISH */
+.fin-av{font-size:72px;display:block;animation:bounce 1.5s ease infinite;filter:drop-shadow(0 0 28px rgba(255,215,0,.6));}
+.fin-rank{font-family:'Kanit',sans-serif;font-size:72px;font-weight:900;color:var(--gold);line-height:1;text-shadow:0 0 40px rgba(255,215,0,.5);}
+.fin-score{font-family:'Kanit',sans-serif;font-size:24px;font-weight:900;color:var(--water);}
+.fin-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;margin:12px 0;}
+.fg{padding:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);border-radius:12px;text-align:center;}
+.fg-v{font-size:22px;font-weight:700;}.fg-l{font-size:9px;color:var(--water);opacity:.6;margin-top:2px;}
+
+/* ══ ADMIN STYLES ══ */
+.admin-wrap{position:relative;z-index:1;width:100%;max-width:1100px;margin:0 auto;padding:12px 16px;min-height:100vh;display:flex;flex-direction:column;gap:10px;}
+.topbar{display:flex;align-items:center;gap:10px;padding:10px 16px;background:rgba(255,255,255,.06);border:1px solid rgba(0,201,255,.15);border-radius:14px;}
+.topbar-logo{font-size:24px;}
+.topbar-title{font-family:'Kanit',sans-serif;font-size:17px;font-weight:900;background:linear-gradient(135deg,var(--gold),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.admin-badge{padding:3px 10px;background:rgba(168,85,247,.2);border:1px solid rgba(168,85,247,.4);border-radius:99px;font-size:10px;color:#c084fc;font-weight:700;}
+.tb-space{flex:1;}
+.tb-stats{display:flex;gap:14px;align-items:center;}
+.ts{text-align:center;}.ts-v{font-family:'Kanit',sans-serif;font-size:18px;font-weight:900;color:var(--gold);line-height:1;}.ts-l{font-size:9px;color:var(--water);opacity:.6;}
+.live-pill{display:flex;align-items:center;gap:5px;padding:3px 10px;background:rgba(46,213,115,.1);border:1px solid rgba(46,213,115,.3);border-radius:99px;}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 1.2s infinite;}
+.live-txt{font-size:10px;color:var(--green);font-weight:700;}
+.admin-main{display:grid;grid-template-columns:1fr 280px;gap:10px;flex:1;min-height:0;}
+@media(max-width:800px){.admin-main{grid-template-columns:1fr;}}
+.stadium{background:var(--track-bg);border:1px solid rgba(0,201,255,.15);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;}
+.stadium-hdr{padding:9px 14px;background:rgba(0,0,0,.3);border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:space-between;}
+.stadium-title{font-family:'Kanit',sans-serif;font-size:13px;font-weight:900;color:var(--gold);}
+.track-area{flex:1;padding:10px 14px;overflow-y:auto;display:flex;flex-direction:column;}
+.track-area::-webkit-scrollbar{width:3px;}
+.track-area::-webkit-scrollbar-thumb{background:rgba(0,201,255,.3);border-radius:99px;}
+.lane{display:flex;align-items:center;gap:8px;padding:4px 0;}
+.lane-rank{width:26px;flex-shrink:0;text-align:center;font-size:13px;}
+.lane-info{width:60px;flex-shrink:0;}
+.lane-emp{font-size:10px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.lane-pts{font-family:'Kanit',sans-serif;font-size:9px;color:var(--gold);}
+.lane-track{flex:1;height:34px;position:relative;background:rgba(255,255,255,.03);border-radius:8px;overflow:visible;}
+.track-surface{position:absolute;inset:0;border-radius:8px;background:repeating-linear-gradient(90deg,rgba(255,255,255,.03) 0px,rgba(255,255,255,.03) 1px,transparent 1px,transparent 40px);border:1px solid rgba(255,255,255,.05);}
+.track-fill{position:absolute;left:0;top:4px;bottom:4px;border-radius:6px;transition:width .8s cubic-bezier(.4,0,.2,1);}
+.finish-line{position:absolute;right:0;top:-4px;bottom:-4px;width:7px;background:repeating-linear-gradient(180deg,#fff 0px,#fff 4px,#000 4px,#000 8px);border-radius:0 6px 6px 0;opacity:.5;}
+.runner{position:absolute;top:50%;transform:translateY(-50%);font-size:20px;transition:left .8s cubic-bezier(.4,0,.2,1);z-index:10;margin-left:-10px;}
+.runner.finished{animation:dance .5s ease infinite alternate;}
+@keyframes dance{0%{transform:translateY(-60%)}100%{transform:translateY(-40%)}}
+.lane-sep{height:1px;background:rgba(255,255,255,.04);margin:0 0 0 94px;}
+.lane-prog{width:32px;flex-shrink:0;text-align:right;font-size:9px;}
+.lp-val{color:rgba(255,255,255,.4);}
+.lp-fin{color:var(--green);font-weight:700;}
+.sidebar-col{display:flex;flex-direction:column;gap:10px;}
+.lb-card{background:rgba(255,255,255,.06);border:1px solid rgba(0,201,255,.15);border-radius:16px;padding:13px;flex:1;overflow:hidden;display:flex;flex-direction:column;}
+.lb-card-title{font-family:'Kanit',sans-serif;font-size:13px;font-weight:900;background:linear-gradient(135deg,var(--gold),var(--orange));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:9px;}
+.lb-list{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:4px;}
+.lb-list::-webkit-scrollbar{width:3px;}
+.lb-list::-webkit-scrollbar-thumb{background:rgba(0,201,255,.3);border-radius:99px;}
+.lb-row{display:flex;align-items:center;gap:7px;padding:6px 9px;border-radius:9px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.05);transition:all .4s;}
+.lb-row.r1{background:linear-gradient(135deg,rgba(255,215,0,.15),rgba(255,165,0,.08));border-color:rgba(255,215,0,.4);}
+.lb-row.r2{background:rgba(192,192,192,.1);border-color:rgba(192,192,192,.25);}
+.lb-row.r3{background:rgba(205,127,50,.1);border-color:rgba(205,127,50,.25);}
+.lb-rn{width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'Kanit',sans-serif;font-size:10px;font-weight:900;flex-shrink:0;}
+.r1 .lb-rn{background:linear-gradient(135deg,#FFD700,#FFA500);color:#3d2000;}
+.r2 .lb-rn{background:linear-gradient(135deg,#C0C0C0,#909090);color:#111;}
+.r3 .lb-rn{background:linear-gradient(135deg,#CD7F32,#8B4513);color:#fff;}
+.lb-rn.nr{background:rgba(255,255,255,.07);color:rgba(255,255,255,.4);font-size:9px;}
+.lb-av{font-size:18px;flex-shrink:0;}
+.lb-nm{flex:1;min-width:0;}
+.lb-emp{font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.lb-sub{font-size:9px;color:var(--water);opacity:.55;}
+.lb-sc{font-family:'Kanit',sans-serif;font-size:15px;font-weight:900;color:var(--gold);}
+.fin-badge{font-size:8px;padding:1px 5px;border-radius:99px;background:rgba(46,213,115,.2);color:var(--green);font-weight:700;}
+.stats-card{background:rgba(255,255,255,.06);border:1px solid rgba(0,201,255,.15);border-radius:14px;padding:12px;}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.sg{padding:9px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.06);border-radius:10px;text-align:center;}
+.sg-v{font-family:'Kanit',sans-serif;font-size:18px;font-weight:900;line-height:1;}
+.sg-l{font-size:9px;color:var(--water);opacity:.6;margin-top:2px;}
+.admin-bottom{display:flex;align-items:center;gap:8px;padding:7px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:11px;}
+.bb-time{font-size:10px;color:rgba(255,255,255,.3);}
+.bb-space{flex:1;}
+.btn-sm{padding:6px 14px;border:none;border-radius:8px;color:#fff;font-family:'Prompt',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;background:rgba(0,201,255,.15);border:1px solid rgba(0,201,255,.3);}
+.btn-sm:hover{background:rgba(0,201,255,.3);}
+.btn-sm.red{background:rgba(255,71,87,.15);border-color:rgba(255,71,87,.3);}
+.btn-sm.red:hover{background:rgba(255,71,87,.35);}
+.podium-strip{display:none;padding:8px 14px;background:rgba(255,215,0,.06);border-top:1px solid rgba(255,215,0,.15);align-items:center;gap:10px;flex-wrap:wrap;}
+.podium-strip.show{display:flex;}
+.pod-item{display:flex;align-items:center;gap:5px;}
+.pod-sep{width:1px;height:28px;background:rgba(255,255,255,.1);}
+
+/* CONFETTI */
+.confetti-c{position:fixed;inset:0;pointer-events:none;z-index:999;overflow:hidden;}
+.cp{position:absolute;width:8px;height:8px;animation:cfFall linear forwards;}
+@keyframes cfFall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}
+
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes timerPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(1.1)}}
+
+/* LANG TOGGLE */
+.lang-toggle{position:fixed;top:14px;right:14px;z-index:999;display:flex;gap:4px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:99px;padding:3px;}
+.lang-btn{padding:4px 14px;border-radius:99px;border:none;font-family:'Prompt',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;background:transparent;color:rgba(255,255,255,.45);}
+.lang-btn.active{background:linear-gradient(135deg,var(--teal),var(--teal2));color:#fff;box-shadow:0 2px 8px rgba(0,201,255,.4);}
+
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="confetti-c" id="confettiC"></div>
+
+<!-- LANGUAGE TOGGLE -->
+<div class="lang-toggle" id="langToggle">
+  <button class="lang-btn active" id="btnTH" onclick="setLang('th')">TH</button>
+  <button class="lang-btn" id="btnEN" onclick="setLang('en')">EN</button>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PLAYER SECTION (max-width wrap)
+══════════════════════════════════════════ -->
+<div class="wrap" id="playerWrap">
+
+  <!-- HOME: เลือกบทบาท -->
+  <div class="screen active" id="sHome">
+    <div class="logo">💦</div>
+    <h1 data-i18n="home_title">สงกรานต์ปลอดภัย</h1>
+    <div class="sub" data-i18n="home_sub">ทดสอบความรู้ความปลอดภัยช่วงสงกรานต์</div>
+    <div class="role-grid">
+      <button class="role-btn player" onclick="showScreen('sJoin')">
+        <span class="role-icon">🎮</span>
+        <div class="role-title" data-i18n="role_player">ผู้เล่น</div>
+        <div class="role-desc" data-i18n="role_player_desc">เข้าร่วมทำแบบทดสอบและแข่งขันกับเพื่อน</div>
+      </button>
+      <button class="role-btn admin" onclick="showScreen('sAdminLogin')">
+        <span class="role-icon">📺</span>
+        <div class="role-title">Admin</div>
+        <div class="role-desc" data-i18n="role_admin_desc">ดูผลแบบ Real-time บนจอใหญ่</div>
+      </button>
+    </div>
+  </div>
+
+  <!-- ADMIN LOGIN -->
+  <div class="screen" id="sAdminLogin">
+    <div class="logo" style="font-size:44px">🔐</div>
+    <h1 style="font-size:26px">Admin Login</h1>
+    <div class="sub" data-i18n="admin_login_sub">ใส่รหัสผ่านเพื่อเข้าหน้า Dashboard</div>
+    <div class="card">
+      <label class="lbl" data-i18n="admin_pw_label">รหัสผ่าน Admin</label>
+      <input class="inp inp-pw" id="pwInp" type="password" maxlength="20" placeholder="••••••"
+        autocomplete="off" oninput="clearPwErr()" onkeydown="if(event.key==='Enter')doAdminLogin()"/>
+      <button class="btn btn-purple" onclick="doAdminLogin()" style="margin-top:12px" data-i18n="admin_login_btn">🔓 เข้าสู่ Dashboard</button>
+      <div class="err" id="pwErr"></div>
+      <button class="btn btn-ghost" onclick="showScreen('sHome')" style="margin-top:8px" data-i18n="back">← กลับ</button>
+    </div>
+  </div>
+
+  <!-- JOIN (PLAYER) -->
+  <div class="screen" id="sJoin">
+    <div class="logo" style="font-size:44px">💦</div>
+    <h1 style="font-size:26px" data-i18n="join_title">เข้าร่วมเกม</h1>
+    <div class="sub" data-i18n="join_sub">กรอกรหัสพนักงานและเลือกตัวละคร</div>
+    <div class="card">
+      <label class="lbl" data-i18n="emp_label">รหัสพนักงาน (4 หลัก)</label>
+      <input class="inp" id="empInp" type="tel" maxlength="4" placeholder="0000"
+        autocomplete="off" oninput="onEmpInput()" onkeydown="if(event.key==='Enter')doJoin()"/>
+      <div style="margin-top:14px;margin-bottom:4px"><label class="lbl" data-i18n="av_label">เลือกตัวละคร ✨</label></div>
+      <div class="av-grid" id="avGrid"></div>
+      <button class="btn" id="joinBtn" onclick="doJoin()" disabled data-i18n="join_btn">▶ เริ่มเล่นเกม</button>
+      <div class="err" id="errBox"></div>
+      <button class="btn btn-ghost" onclick="showScreen('sHome')" style="margin-top:6px" data-i18n="back">← กลับ</button>
+      <div class="sep"></div>
+      <div style="text-align:center;color:rgba(255,255,255,.2);font-size:10px" data-i18n="one_time">1 รหัส เล่นได้ 1 ครั้งเท่านั้น</div>
+    </div>
+  </div>
+
+  <!-- ALREADY PLAYED -->
+  <div class="screen" id="sPlayed">
+    <div class="logo" style="font-size:44px">💦</div>
+    <div class="card" style="text-align:center">
+      <span style="font-size:50px;display:block;margin-bottom:8px">✅</span>
+      <div style="font-family:Kanit;font-size:20px;font-weight:900;color:var(--gold);margin-bottom:8px">คุณเล่นแล้ว!</div>
+      <div class="ap-id" id="apId">0000</div>
+      <div class="ap-box">
+        <span style="font-size:44px;display:block;margin-bottom:6px" id="apAv">🦁</span>
+        <div style="font-family:Kanit;font-size:36px;font-weight:900;color:var(--gold)" id="apSc">0</div>
+        <div style="font-size:12px;color:var(--water);opacity:.7">คะแนน</div>
+        <div style="font-size:10px;color:var(--water);opacity:.5;margin-top:4px" id="apDate"></div>
+      </div>
+      <div style="color:var(--water);font-size:12px;line-height:1.8;margin-bottom:12px">รหัสนี้เล่นได้เพียง <strong style="color:var(--gold)">1 ครั้ง</strong> เท่านั้น</div>
+      <button class="btn" onclick="showScreen('sJoin');document.getElementById('empInp').value='';checkJoinBtn()">🔄 เปลี่ยนรหัส</button>
+    </div>
+  </div>
+
+  <!-- GAME -->
+  <div class="screen" id="sGame">
+    <div class="score-bar">
+      <div class="sb-av" id="sbAv">🦁</div>
+      <div class="sb-info"><div class="sb-name" id="sbName">—</div><div class="sb-id">กำลังเล่นอยู่</div></div>
+      <div style="text-align:right">
+        <div class="sb-score" id="sbScore">0</div>
+        <div class="sb-qlabel" id="sbQL">ข้อ 1/15</div>
+      </div>
+      <div style="text-align:center;margin-left:10px;padding:6px 10px;background:rgba(0,201,255,.1);border:1px solid rgba(0,201,255,.2);border-radius:10px;min-width:54px;">
+        <div id="timerDisp" style="font-family:Kanit,sans-serif;font-size:18px;font-weight:900;color:var(--teal);">20:00</div>
+        <div style="font-size:8px;color:var(--water);opacity:.55;" data-i18n="time_label">เวลา</div>
+      </div>
+    </div>
+    <div class="prog-wrap">
+      <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+      <div class="prog-label"><span id="pLabel">ข้อที่ 1 จาก 15</span><span id="pPct">0%</span></div>
+    </div>
+    <div class="mini-track">
+      <div class="mt-label"><div class="mt-live-dot"></div><span data-i18n="live_rank">อันดับ Real-time</span></div>
+      <div id="trackLanes"></div>
+    </div>
+    <div class="card" id="qCard">
+      <span class="cat-badge" id="catB"></span>
+      <div class="q-text" id="qTxt"></div>
+      <div class="opts" id="optsG"></div>
+      <div class="fb-bar" id="fbBar"></div>
+      <button class="nxt" id="nxtBtn" onclick="nextQ()" data-i18n="next_btn">ข้อถัดไป →</button>
+    </div>
+  </div>
+
+  <!-- FINISH -->
+  <div class="screen" id="sFinish">
+    <span class="fin-av" id="finAv">🦁</span>
+    <div style="font-family:Kanit;font-size:16px;color:var(--water);margin-bottom:4px;text-align:center" data-i18n="rank_label">อันดับของคุณ</div>
+    <div class="fin-rank" id="finRank">—</div>
+    <div class="fin-score" id="finScore">0 คะแนน</div>
+    <div class="fin-grid">
+      <div class="fg"><div class="fg-v" id="finOk" style="color:var(--green)">0</div><div class="fg-l" data-i18n="correct_label">ตอบถูก</div></div>
+      <div class="fg"><div class="fg-v" id="finBd" style="color:var(--red)">0</div><div class="fg-l" data-i18n="wrong_label">ตอบผิด</div></div>
+    </div>
+    <div class="mini-track" style="margin-bottom:14px">
+      <div class="mt-label" style="font-size:11px;font-weight:700;color:var(--gold)" data-i18n="final_rank">🏆 อันดับสุดท้าย</div>
+      <div id="finalLanes"></div>
+    </div>
+    <div style="padding:12px;background:rgba(0,201,255,.08);border:1px solid rgba(0,201,255,.2);border-radius:12px;color:var(--water);font-size:12px;text-align:center;line-height:1.8;width:100%" data-i18n="finish_msg">
+      💡 สงกรานต์ปลอดภัย ทุกคนกลับบ้านได้!
+    </div>
+    <button class="btn btn-ghost" onclick="showScreen('sHome')" style="margin-top:10px;width:100%" data-i18n="back_home">🏠 กลับหน้าหลัก</button>
+  </div>
+
+</div><!-- /playerWrap -->
+
+<!-- ══════════════════════════════════════════
+     ADMIN SECTION (full width)
+══════════════════════════════════════════ -->
+<div class="admin-wrap" id="adminWrap" style="display:none;">
+  <div class="topbar">
+    <span class="topbar-logo">💦</span>
+    <div class="topbar-title">สงกรานต์ปลอดภัย</div>
+    <span class="admin-badge">👑 ADMIN</span>
+    <div class="tb-space"></div>
+    <div class="tb-stats">
+      <div class="ts"><div class="ts-v" id="aTotal">0</div><div class="ts-l">ผู้เล่น</div></div>
+      <div class="ts"><div class="ts-v" id="aFinished" style="color:var(--green)">0</div><div class="ts-l">จบแล้ว</div></div>
+      <div class="ts"><div class="ts-v" id="aAvg" style="color:var(--teal)">0</div><div class="ts-l">คะแนนเฉลี่ย</div></div>
+      <div class="ts"><div class="ts-v" id="aTop" style="color:var(--orange)">0</div><div class="ts-l">สูงสุด</div></div>
+      <div class="live-pill"><div class="live-dot"></div><span class="live-txt">LIVE</span></div>
+    </div>
+    <button class="btn-sm" onclick="exitAdmin()" style="margin-left:8px">← ออก</button>
+  </div>
+  <div class="admin-main">
+    <div class="stadium">
+      <div class="stadium-hdr">
+        <div class="stadium-title">🏃 ลู่วิ่งแข่งขัน Real-time</div>
+        <div id="aLastUpdate" style="font-size:9px;color:rgba(255,255,255,.3)">—</div>
+      </div>
+      <div class="podium-strip" id="podiumStrip"></div>
+      <div class="track-area" id="aTrackArea">
+        <div style="text-align:center;padding:40px;color:rgba(255,255,255,.2);font-size:13px">⏳ รอผู้เล่นเข้าร่วม...</div>
+      </div>
+    </div>
+    <div class="sidebar-col">
+      <div class="lb-card">
+        <div class="lb-card-title">🏆 Leaderboard</div>
+        <div class="lb-list" id="aLbList"><div style="text-align:center;padding:20px;color:rgba(255,255,255,.3);font-size:11px">รอผู้เล่น...</div></div>
+      </div>
+      <div class="stats-card">
+        <div style="font-family:Kanit;font-size:12px;font-weight:900;color:var(--teal);margin-bottom:7px">📊 สถิติ</div>
+        <div class="stats-grid">
+          <div class="sg"><div class="sg-v" id="aSg1" style="color:var(--green)">0%</div><div class="sg-l">ตอบถูกเฉลี่ย</div></div>
+          <div class="sg"><div class="sg-v" id="aSg2" style="color:var(--gold)">0</div><div class="sg-l">รหัสที่ใช้</div></div>
+        </div>
+      </div>
+      <!-- TIME CONTROL CARD -->
+      <div class="stats-card" style="border-color:rgba(255,215,0,.25);">
+        <div style="font-family:Kanit;font-size:12px;font-weight:900;color:var(--gold);margin-bottom:10px">⏱️ ตั้งเวลาผู้เล่น</div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:10px;">
+          <button class="btn-sm" onclick="adminAdjTime(-5)" style="font-size:16px;padding:8px 14px;background:rgba(255,71,87,.2);border-color:rgba(255,71,87,.4);">−5</button>
+          <button class="btn-sm" onclick="adminAdjTime(-1)" style="font-size:14px;padding:8px 12px;background:rgba(255,71,87,.15);border-color:rgba(255,71,87,.3);">−1</button>
+          <div style="text-align:center;min-width:60px;">
+            <div id="adminTimeDisp" style="font-family:Kanit,sans-serif;font-size:26px;font-weight:900;color:var(--gold);">20:00</div>
+            <div style="font-size:9px;color:var(--water);opacity:.5;">นาที</div>
+          </div>
+          <button class="btn-sm" onclick="adminAdjTime(1)" style="font-size:14px;padding:8px 12px;background:rgba(46,213,115,.15);border-color:rgba(46,213,115,.3);">+1</button>
+          <button class="btn-sm" onclick="adminAdjTime(5)" style="font-size:16px;padding:8px 14px;background:rgba(46,213,115,.2);border-color:rgba(46,213,115,.4);">+5</button>
+        </div>
+        <div style="font-size:9px;color:var(--water);opacity:.5;text-align:center;margin-bottom:8px;">มีผลกับผู้เล่นที่ยังไม่ได้เริ่มเล่น</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+          <button class="btn-sm" onclick="adminSetTime(10)" style="font-size:10px;">10 นาที</button>
+          <button class="btn-sm" onclick="adminSetTime(15)" style="font-size:10px;">15 นาที</button>
+          <button class="btn-sm" onclick="adminSetTime(20)" style="font-size:10px;background:rgba(255,215,0,.15);border-color:rgba(255,215,0,.3);">20 นาที ⭐</button>
+          <button class="btn-sm" onclick="adminSetTime(30)" style="font-size:10px;">30 นาที</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="admin-bottom">
+    <div class="bb-time" id="aBbTime">—</div>
+    <div class="bb-space"></div>
+    <button class="btn-sm" onclick="adminRefresh()">🔄 รีเฟรช</button>
+    <button class="btn-sm red" onclick="confirmReset()">🗑️ ล้างข้อมูล</button>
+  </div>
+</div>
+
+<script>
+/* ══════════════ SUPABASE ══════════════ */
+const SURL='https://iuxvvajeyqnnwwdyaudm.supabase.co';
+const SKEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml1eHZ2YWpleXFubnd3ZHlhdWRtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMyMDY1MDAsImV4cCI6MjA4ODc4MjUwMH0.AXDmUk3ovqECVRAypQtxufky8quH8Rc4uR8cGg3A8aU';
+const sb=supabase.createClient(SURL,SKEY);
+
+const ADMIN_PASSWORD = 'admin1234'; // ← เปลี่ยนรหัสผ่านตรงนี้ได้เลยครับ
+
+/* ══════════════ DATA ══════════════ */
+const Q_PER_PLAYER = 15;
+const TIME_LIMIT = 20 * 60; // 20 นาที (วินาที)
+const SCORE_PER_Q = 1000;
+
+const QS_TH=[
+// ── 🚗 การขับขี่ & แอลกอฮอล์ ──
+{cat:'🚗',q:'ระดับแอลกอฮอล์สูงสุดที่กฎหมายไทยอนุญาตสำหรับผู้ขับขี่รถยนต์คือเท่าไหร่?',opts:['20 มก.%','50 มก.%','80 มก.%','100 มก.%'],ok:1,fb:'กฎหมายกำหนดไม่เกิน 50 มก.% หากเกินถือว่าเมาแล้วขับ โทษจำคุกสูงสุด 1 ปี ปรับ 20,000 บาท'},
+{cat:'🚗',q:'สาเหตุอันดับ 1 ของอุบัติเหตุช่วงสงกรานต์คืออะไร?',opts:['ถนนลื่น','ดื่มแล้วขับ','ง่วงหลับใน','โทรศัพท์'],ok:1,fb:'ดื่มแล้วขับคือสาเหตุหลักกว่า 40% ของอุบัติเหตุทุกปีในช่วงสงกรานต์'},
+{cat:'🚗',q:'ง่วงมากระหว่างเดินทางไกล ควรทำอะไรก่อน?',opts:['เปิดแอร์เย็นจัด','ดื่มกาแฟแล้วขับต่อ','จอดพักนอนหลับ 20-30 นาที','เปิดเพลงดัง'],ok:2,fb:'Power Nap 20-30 นาทีคือวิธีที่ดีที่สุด กาแฟช่วยได้แค่ชั่วคราวและไม่ปลอดภัยในระยะยาว'},
+{cat:'🚗',q:'ระยะเวลาที่ควรพักอย่างน้อยเมื่อขับรถทางไกลต่อเนื่องคือกี่ชั่วโมง?',opts:['3 ชั่วโมง','2 ชั่วโมง','4 ชั่วโมง','1 ชั่วโมง'],ok:1,fb:'ควรพักทุก 2 ชั่วโมง อย่างน้อย 15-20 นาที เพื่อลดความเสี่ยงจากความง่วง'},
+{cat:'🚗',q:'การใช้โทรศัพท์ขณะขับรถมีโทษปรับเท่าไหร่?',opts:['200 บาท','400 บาท','1,000 บาท','500 บาท'],ok:2,fb:'โทษปรับ 1,000 บาท และอาจถูกพักใบอนุญาตขับขี่ด้วย'},
+{cat:'🚗',q:'ข้อใดไม่ควรทำขณะขับรถ?',opts:['ตรวจสอบกระจก','คาดเข็มขัดนิรภัย','รับประทานอาหาร','เปิดไฟหน้า'],ok:2,fb:'กินอาหารขณะขับรถทำให้ไม่สามารถควบคุมพวงมาลัยได้อย่างเต็มที่'},
+{cat:'🚗',q:'ควรเว้นระยะห่างจากรถคันหน้าอย่างน้อยเท่าไหร่ที่ความเร็ว 90 กม./ชม.?',opts:['1 ช่วงรถ','2 ช่วงรถ','3 ช่วงรถ','5 ช่วงรถ'],ok:2,fb:'ที่ความเร็ว 90 กม./ชม. ควรเว้นระยะอย่างน้อย 3 ช่วงรถ หรือประมาณ 45 เมตร'},
+{cat:'🚗',q:'ก่อนออกเดินทางไกลช่วงสงกรานต์ควรตรวจสอบรถอะไรก่อน?',opts:['เฉพาะน้ำมันเชื้อเพลิง','ยาง เบรก น้ำมันเครื่อง ไฟ','เฉพาะยางรถ','เฉพาะระดับน้ำในหม้อน้ำ'],ok:1,fb:'ควรตรวจสอบทั้งยาง เบรก น้ำมันเครื่อง ไฟสัญญาณ และน้ำในหม้อน้ำก่อนทุกครั้ง'},
+{cat:'🚗',q:'อุณหภูมิยางรถยนต์ที่เพิ่มขึ้นจากแสงแดดช่วงสงกรานต์อาจทำให้เกิดอะไร?',opts:['เบรกแตก','ยางระเบิด','พวงมาลัยหนัก','แอร์รถดับ'],ok:1,fb:'ยางที่ร้อนมากเกินไปและลมยางไม่เหมาะสมเสี่ยงระเบิดได้ ควรเติมลมยางตามที่ผู้ผลิตกำหนด'},
+{cat:'🚗',q:'หากพบว่าตัวเองหรือผู้โดยสารดื่มแล้ว ควรทำอย่างไร?',opts:['ขับช้าๆ แทน','ให้คนที่ไม่ได้ดื่มขับ หรือเรียกแท็กซี่','จอดรอสักครู่แล้วขับ','ดื่มน้ำมากๆ แล้วขับ'],ok:1,fb:'ไม่มีวิธีแก้ความมึนเมาได้ในระยะสั้น ต้องให้คนที่ไม่ดื่มขับเท่านั้น'},
+{cat:'🛵',q:'ยานพาหนะใดมีผู้เสียชีวิตสูงสุดในช่วงสงกรานต์?',opts:['รถยนต์','รถกระบะ','รถจักรยานยนต์','รถบัส'],ok:2,fb:'รถจักรยานยนต์คิดเป็น 80-85% ของผู้เสียชีวิตทุกปีในช่วงสงกรานต์'},
+{cat:'🛵',q:'ผู้โดยสารซ้อนท้ายรถจักรยานยนต์ต้องทำอะไร?',opts:['ไม่ต้องทำอะไรพิเศษ','สวมหมวกกันน็อกด้วย','จับเอวคนขับให้แน่น','นั่งหันหน้าไปข้างหน้า'],ok:1,fb:'กฎหมายกำหนดให้ผู้โดยสารซ้อนท้ายต้องสวมหมวกกันน็อกด้วยเช่นกัน'},
+{cat:'🛵',q:'ความเร็วสูงสุดของรถจักรยานยนต์บนทางหลวงทั่วไปคือเท่าไหร่?',opts:['60 กม./ชม.','80 กม./ชม.','90 กม./ชม.','120 กม./ชม.'],ok:1,fb:'รถจักรยานยนต์ห้ามขับเกิน 80 กม./ชม. บนทางหลวงทั่วไป'},
+{cat:'🛵',q:'เมื่อขับรถจักรยานยนต์ในคืนที่มีแสงน้อย ควรทำอะไร?',opts:['ขับเร็วขึ้นเพื่อผ่านให้ไว','เปิดไฟหน้าและลดความเร็ว','ขับกลางถนน','ไม่ต้องเปลี่ยนพฤติกรรม'],ok:1,fb:'ควรเปิดไฟหน้าเสมอและลดความเร็วลงเพื่อให้มีเวลาตอบสนองเพียงพอ'},
+{cat:'🛵',q:'จุดอันตรายที่สุดในการขับรถจักรยานยนต์คืออะไร?',opts:['ทางตรง','ทางโค้ง','ทางลาดชัน','ทางแยก'],ok:3,fb:'ทางแยกเป็นจุดที่เกิดอุบัติเหตุมากที่สุด เพราะมีรถตัดหน้าและการมองเห็นจำกัด'},
+{cat:'🛵',q:'ห้ามขับรถจักรยานยนต์บนทางด่วนเพราะอะไร?',opts:['เปลืองน้ำมัน','อันตรายจากความเร็วสูงและมีจุดขึ้นลงไม่เหมาะสม','ทำให้รถติด','ผิดมารยาท'],ok:1,fb:'กฎหมายห้ามรถจักรยานยนต์ขึ้นทางด่วนเด็ดขาด เพราะความเร็วสูงและโครงสร้างทางไม่เหมาะสม'},
+{cat:'🪖',q:'หมวกกันน็อกลดความเสี่ยงเสียชีวิตจากอุบัติเหตุได้กี่เปอร์เซ็นต์?',opts:['30%','50%','70%','มากกว่า 85%'],ok:3,fb:'หมวกกันน็อกมาตรฐานลดความเสี่ยงเสียชีวิตได้มากกว่า 85% และลดการบาดเจ็บที่ศีรษะได้ 69%'},
+{cat:'🪖',q:'หมวกกันน็อกที่ถูกต้องควรพอดีกับศีรษะแค่ไหน?',opts:['หลวมเล็กน้อยเผื่อขยับ','แน่นพอดี ไม่หลุด ไม่บีบ','แน่นมากเพื่อความปลอดภัย','ใส่แล้วขยับได้เล็กน้อย'],ok:1,fb:'หมวกที่ดีต้องแน่นพอดี ไม่หลุดเมื่อเขย่า ไม่บีบจนปวดหัว ควรสวมแล้วลองเขย่าทดสอบ'},
+{cat:'🪖',q:'ควรเปลี่ยนหมวกกันน็อกเมื่อใด?',opts:['ทุก 10 ปี','เมื่อหมวกชำรุดหรือถูกกระแทก','เมื่อสีซีด','ไม่ต้องเปลี่ยน'],ok:1,fb:'ควรเปลี่ยนหมวกทุก 3-5 ปี หรือทันทีเมื่อถูกกระแทกอย่างรุนแรง แม้ไม่เห็นรอยร้าวภายนอก'},
+{cat:'🪖',q:'หมวกกันน็อกมาตรฐาน มอก. หมายถึงอะไร?',opts:['ราคาแพง','ผ่านการทดสอบตามมาตรฐานอุตสาหกรรมไทย','ทำจากวัสดุนำเข้า','ใช้ได้เฉพาะในไทย'],ok:1,fb:'มอก. (มาตรฐานผลิตภัณฑ์อุตสาหกรรม) รับรองว่าผ่านการทดสอบความปลอดภัยตามมาตรฐานกำหนด'},
+{cat:'🪖',q:'การไม่สวมหมวกกันน็อกมีโทษปรับเท่าไหร่?',opts:['100 บาท','200 บาท','300 บาท','500 บาท'],ok:1,fb:'โทษปรับ 200-500 บาท ทั้งผู้ขับขี่และผู้โดยสาร ตาม พ.ร.บ.จราจรทางบก'},
+{cat:'💦',q:'พฤติกรรมใดอันตรายที่สุดขณะเล่นน้ำสงกรานต์?',opts:['ใส่แว่นกันแดด','ราดน้ำใส่คนขับรถ','ดื่มน้ำมากๆ','ทาครีมกันแดด'],ok:1,fb:'ราดน้ำใส่ผู้ขับขี่ทำให้ตกใจและสูญเสียการควบคุม เคยเกิดอุบัติเหตุถึงชีวิตมาแล้วหลายกรณี'},
+{cat:'💦',q:'เมื่อเล่นน้ำข้างถนน ควรยืนที่ใด?',opts:['กลางถนน','บนทางเท้าหรือพื้นที่ปลอดภัย','ริมขอบถนน','ตรงกลางเกาะกลาง'],ok:1,fb:'ยืนบนทางเท้าหรือพื้นที่ที่จัดไว้เท่านั้น ห้ามยืนบนถนนเด็ดขาด'},
+{cat:'💦',q:'น้ำแข็งในปืนฉีดน้ำสงกรานต์อาจก่อให้เกิดอันตรายอะไร?',opts:['ไม่มีอันตราย','ทำให้ผิวหนังช็อกจากความเย็น บาดเจ็บดวงตา','ทำให้น้ำหนักปืนมากขึ้น','ทำให้น้ำรั่ว'],ok:1,fb:'น้ำแข็งในปืนฉีดอาจทำให้ตาบาดเจ็บหรือผิวหนังช็อกจากความเย็นได้ โดยเฉพาะเด็กเล็ก'},
+{cat:'💦',q:'เด็กเล็กควรปฏิบัติอย่างไรขณะเล่นน้ำสงกรานต์ริมถนน?',opts:['ใส่ชุดว่ายน้ำ','สวมเสื้อชูชีพและอยู่ใกล้ผู้ใหญ่ตลอดเวลา','ใส่ชุดกันน้ำ','สวมรองเท้าบูท'],ok:1,fb:'เด็กเล็กต้องอยู่ใกล้ผู้ใหญ่ตลอด และพื้นที่เล่นน้ำควรห่างจากถนนและแหล่งน้ำลึก'},
+{cat:'💦',q:'อันตรายจากแสงแดดจัดช่วงสงกรานต์ที่ร้ายแรงที่สุดคืออะไร?',opts:['ผิวไหม้เท่านั้น','ฮีทสโตรก (โรคลมแดด) ที่อาจเสียชีวิตได้','ทำให้เย็นลง','ทำให้กระหายน้ำ'],ok:1,fb:'ฮีทสโตรกอันตรายมาก ควรดื่มน้ำมากๆ หลีกเลี่ยงแสงแดดจัด และหยุดพักในที่ร่มสม่ำเสมอ'},
+{cat:'🏊',q:'พบคนจมน้ำ ขั้นตอนแรกที่ถูกต้องที่สุดคืออะไร?',opts:['กระโดดลงน้ำช่วยทันที','โทร 1669 และหาอุปกรณ์ช่วย','รอให้คนอื่นช่วย','ตะโกนเรียกให้ขึ้นมา'],ok:1,fb:'โทร 1669 ก่อนเสมอ แล้วหาสิ่งของขว้างให้จับ เช่น เชือก ห่วงยาง ขวดน้ำ อย่ากระโดดลงถ้าว่ายน้ำไม่เป็น'},
+{cat:'🏊',q:'หากเด็กจมน้ำและหมดสติ ควรทำอะไรก่อน CPR?',opts:['รีบนำขึ้นจากน้ำ','เขย่าตัวให้ตื่น','เปิดทางเดินหายใจและตรวจการหายใจ','ให้ดื่มน้ำ'],ok:2,fb:'นำขึ้นจากน้ำ วางราบ เปิดทางเดินหายใจโดยเอียงศีรษะ ตรวจการหายใจ หากไม่หายใจให้ทำ CPR ทันที'},
+{cat:'🏊',q:'การจมน้ำในเด็กส่วนใหญ่เกิดขึ้นในสถานที่ใด?',opts:['ทะเล','แม่น้ำ','บ่อน้ำ สระ คูน้ำใกล้บ้าน','สระว่ายน้ำสาธารณะ'],ok:2,fb:'เด็กมักจมน้ำในแหล่งน้ำใกล้บ้าน เช่น บ่อ สระ คูน้ำ ควรป้องกันด้วยรั้วกั้นและดูแลใกล้ชิด'},
+{cat:'🏊',q:'ท่าลอยตัวช่วยชีวิตเมื่อตกน้ำคือท่าใด?',opts:['ว่ายน้ำให้เร็วที่สุด','ลอยตัวหงาย ผ่อนคลาย อย่าตื่นตกใจ','กระโดดขึ้นลงเพื่อขอความช่วยเหลือ','ดำน้ำไปยังฝั่ง'],ok:1,fb:'ท่าลอยหงายช่วยประหยัดแรงและรักษาชีวิตได้นานกว่า ผ่อนคลายและรอความช่วยเหลือ'},
+{cat:'🏊',q:'ป้ายห้ามว่ายน้ำในแม่น้ำสำคัญอย่างไร?',opts:['เป็นเพียงคำแนะนำ','ต้องปฏิบัติตามเด็ดขาด กระแสน้ำและความลึกอันตราย','ใช้เฉพาะเด็กเท่านั้น','ไม่มีความหมาย'],ok:1,fb:'ป้ายเตือนเหล่านี้มีเหตุผล เช่น กระแสน้ำแรง น้ำวน หรือความลึกที่คาดเดาไม่ได้ ต้องเคารพอย่างเคร่งครัด'},
+{cat:'💊',q:'ยาชนิดใดทำให้ง่วงนอน ควรระวังก่อนขับรถ?',opts:['พาราเซตามอล','ยาแก้แพ้ (antihistamine)','วิตามินซี','ยาธาตุน้ำแดง'],ok:1,fb:'ยาแก้แพ้ antihistamine เช่น CPM ทำให้ง่วงมาก ควรอ่านฉลากยาก่อนขับรถทุกครั้ง'},
+{cat:'💊',q:'อาการโรคลมแดด (Heatstroke) ที่ต้องรีบพบแพทย์คืออะไร?',opts:['เหงื่อออกมาก','ตัวร้อนมากกว่า 40°C ไม่มีเหงื่อ หน้ามืด สับสน','กระหายน้ำ','ผิวแดง'],ok:1,fb:'โรคลมแดดคือฉุกเฉิน อุณหภูมิร่างกายเกิน 40°C ไม่มีเหงื่อ หมดสติได้ ต้องนำส่งโรงพยาบาลทันที'},
+{cat:'💊',q:'ควรดื่มน้ำวันละเท่าไหร่ในช่วงอากาศร้อนจัดสงกรานต์?',opts:['1-2 แก้ว','6-8 แก้ว','อย่างน้อย 8-10 แก้ว','ดื่มเมื่อกระหายเท่านั้น'],ok:2,fb:'ในอากาศร้อนและออกแรงมาก ควรดื่มน้ำอย่างน้อย 8-10 แก้วต่อวัน อย่ารอให้รู้สึกกระหายก่อน'},
+{cat:'💊',q:'แอลกอฮอล์ส่งผลต่อการขับรถอย่างไร?',opts:['ทำให้ตื่นตัวมากขึ้น','ลดความสามารถตัดสินใจและช้าลงเวลาตอบสนอง','ไม่มีผลใดๆ','ทำให้มองเห็นชัดขึ้น'],ok:1,fb:'แอลกอฮอล์ลดความสามารถในการตัดสินใจ ยับยั้งชั่งใจ และชะลอการตอบสนองต่อสถานการณ์อันตราย'},
+{cat:'💊',q:'หากมีอาการคลื่นไส้อาเจียนระหว่างเดินทาง ควรทำอะไร?',opts:['ดื่มแอลกอฮอล์เพื่อคลาย','จอดพักและรับประทานยาแก้เมารถ','ฝืนนั่งต่อ','นอนในรถที่กำลังเคลื่อนที่'],ok:1,fb:'ควรจอดพัก สูดอากาศบริสุทธิ์ รับประทานยาแก้เมารถ หรือให้ผู้อื่นขับแทน'},
+{cat:'🚑',q:'เบอร์ฉุกเฉินเรียกรถพยาบาลในประเทศไทยคือเบอร์ใด?',opts:['191','199','1669','1554'],ok:2,fb:'1669 คือศูนย์นเรนทร กรมการแพทย์ฉุกเฉิน โทรฟรีตลอด 24 ชั่วโมง ทุกเครือข่าย'},
+{cat:'🚑',q:'การทำ CPR ควรกดหน้าอกลึกเท่าไหร่?',opts:['1-2 ซม.','3-4 ซม.','5-6 ซม.','7-8 ซม.'],ok:2,fb:'กดลึก 5-6 ซม. ด้วยความเร็ว 100-120 ครั้ง/นาที ให้หน้าอกยกขึ้นเต็มที่ระหว่างกด'},
+{cat:'🚑',q:'หากพบผู้บาดเจ็บนอนหมดสติข้างถนน สิ่งแรกที่ควรทำคือ?',opts:['เคลื่อนย้ายผู้บาดเจ็บทันที','โทร 1669 และอย่าเคลื่อนย้ายถ้าไม่จำเป็น','ให้น้ำผู้บาดเจ็บ','รอให้ผู้อื่นมาช่วยก่อน'],ok:1,fb:'โทร 1669 ทันที ห้ามเคลื่อนย้ายผู้บาดเจ็บโดยไม่จำเป็น เพราะอาจมีกระดูกสันหลังหัก'},
+{cat:'🚑',q:'วิธีห้ามเลือดเบื้องต้นที่บาดแผลเปิดคือ?',opts:['ล้างด้วยน้ำเย็น','กดแผลด้วยผ้าสะอาดและยกส่วนที่บาดเจ็บขึ้นสูง','ทาแอลกอฮอล์','ปล่อยให้เลือดหยุดเอง'],ok:1,fb:'กดด้วยผ้าสะอาดต่อเนื่อง 10-15 นาที ยกส่วนบาดเจ็บขึ้นสูงกว่าหัวใจ ไม่ยกผ้าบ่อยๆ'},
+{cat:'🚑',q:'อาการช็อกจากอุบัติเหตุมีลักษณะอย่างไร?',opts:['ผิวแดง ร้อน','ผิวซีด เย็น เหงื่อออก ชีพจรเร็ว','ตัวร้อนมาก','ปวดหัวอย่างเดียว'],ok:1,fb:'ภาวะช็อก: ผิวซีด เย็น ชื้น ชีพจรเร็วและอ่อน สับสน ต้องรีบโทร 1669 และให้นอนราบ ยกขาขึ้น'},
+{cat:'🌡️',q:'อุณหภูมิร่างกายปกติของมนุษย์คือเท่าไหร่?',opts:['35°C','36-37°C','38-39°C','40°C'],ok:1,fb:'อุณหภูมิปกติอยู่ที่ 36-37°C หากเกิน 38°C ถือว่ามีไข้ และถ้าเกิน 40°C คืออาการฮีทสโตรกฉุกเฉิน'},
+{cat:'🌡️',q:'กลุ่มเสี่ยงที่อาจได้รับอันตรายจากอากาศร้อนมากที่สุดคือใคร?',opts:['วัยรุ่น','ผู้สูงอายุ เด็กเล็ก และผู้ป่วยโรคเรื้อรัง','นักกีฬา','ผู้ชายวัยทำงาน'],ok:1,fb:'ผู้สูงอายุ เด็กเล็ก และผู้ป่วยโรคเรื้อรัง มีความสามารถในการปรับตัวต่ออุณหภูมิต่ำกว่า'},
+{cat:'🌡️',q:'วิธีป้องกันโรคลมแดดที่ดีที่สุดในช่วงสงกรานต์คือ?',opts:['สวมเสื้อสีเข้ม','ดื่มน้ำสม่ำเสมอ สวมหมวก หลีกเลี่ยงแสงแดดจัด','ออกกำลังกายให้มากขึ้น','อาบน้ำเย็นบ่อยๆ'],ok:1,fb:'ป้องกันด้วยการดื่มน้ำก่อนกระหาย สวมหมวก เสื้อสีอ่อน และพักในที่ร่มเมื่อแดดจัด'},
+{cat:'🌡️',q:'ควรเก็บยาไว้ในรถที่จอดกลางแจ้งหรือไม่?',opts:['ได้ ถ้าปิดกล่องแน่น','ไม่ควร ความร้อนทำลายคุณภาพยา','ได้ถ้าเป็นยาเม็ด','ได้ถ้าใส่ถุงพลาสติก'],ok:1,fb:'ห้องโดยสารรถที่จอดกลางแดดอาจร้อนถึง 60-80°C ทำลายตัวยาและอาจเปลี่ยนสภาพเป็นสารอันตราย'},
+{cat:'🌡️',q:'สัญญาณเตือนว่าร่างกายร้อนเกินไปและต้องพักทันทีคืออะไร?',opts:['เหงื่อออกปกติ','เวียนศีรษะ คลื่นไส้ ผิวแดงร้อน ไม่มีเหงื่อ','กระหายน้ำ','ผิวซีด'],ok:1,fb:'เวียนหัว คลื่นไส้ ผิวร้อนแดง ไม่มีเหงื่อ คือสัญญาณฮีทสโตรก ต้องเข้าที่เย็นและโทร 1669 ทันที'},
+{cat:'🚦',q:'เมื่อพบสัญญาณไฟเหลืองกะพริบที่ทางแยก ควรทำอย่างไร?',opts:['หยุดรอเสมอ','ขับผ่านได้เลย','ลดความเร็วและระมัดระวัง','ไม่ต้องสนใจ'],ok:2,fb:'ไฟเหลืองกะพริบหมายความว่าให้ระมัดระวัง ลดความเร็วและพร้อมหยุดถ้ามีรถอื่น'},
+{cat:'🚦',q:'การแซงในเส้นทึบ (เส้นเหลืองทึบ) ผิดกฎหมายเพราะอะไร?',opts:['ทำให้รถติด','เป็นจุดที่มองเห็นไม่ชัด อันตรายมาก','เปลืองน้ำมัน','ผิดมารยาท'],ok:1,fb:'เส้นทึบหมายถึงห้ามแซงโดยเด็ดขาด เพราะมักอยู่บริเวณโค้ง เนิน หรือทัศนวิสัยจำกัด'},
+{cat:'🚦',q:'ขับรถในช่วงฝนตกควรปฏิบัติอย่างไร?',opts:['ขับเร็วเพื่อผ่านฝนให้ไว','เปิดไฟหน้า ลดความเร็ว เพิ่มระยะห่าง','ใช้ไฟฉุกเฉิน','ขับชิดขวา'],ok:1,fb:'ฝนทำให้ถนนลื่นและทัศนวิสัยลด ต้องเปิดไฟหน้า ลดความเร็ว และเพิ่มระยะห่างจากรถคันหน้า'},
+{cat:'🚦',q:'เมื่อเบรกรถบนถนนเปียกลื่น สิ่งที่ควรทำคือ?',opts:['เบรกกะทันหันรุนแรง','เบรกเบาๆ ค่อยๆ ลดความเร็ว','ปล่อยพวงมาลัย','เหยียบคลัชก่อน'],ok:1,fb:'เบรกแบบปั๊มเบาๆ หรือให้ระบบ ABS ทำงาน ไม่เบรกกะทันหันเพราะทำให้รถล้อล็อกและสไลด์'},
+{cat:'🛣️',q:'ควรแจ้งกำหนดการเดินทางให้ใครทราบก่อนออกเดินทางไกล?',opts:['ไม่จำเป็นต้องแจ้งใคร','แจ้งคนที่บ้านหรือผู้ที่ไว้วางใจ','แจ้งตำรวจ','แจ้งบริษัทประกัน'],ok:1,fb:'แจ้งเส้นทาง เวลาออกเดินทาง และเวลาถึงแก่คนที่บ้าน เพื่อให้ช่วยเหลือได้หากเกิดเหตุฉุกเฉิน'},
+{cat:'🛣️',q:'ช่วงเวลาใดอันตรายที่สุดในการขับรถทางไกล?',opts:['ช่วงเที่ยง','ช่วงเช้าตรู่ (02.00-06.00 น.) และหลังมื้ออาหาร','ช่วงเย็น','ช่วงกลางคืนหลังเที่ยงคืน'],ok:1,fb:'02.00-06.00 น. ร่างกายง่วงที่สุดตามธรรมชาติ และหลังมื้ออาหารกลางวันมักง่วงเพิ่มขึ้น'},
+{cat:'🛣️',q:'ควรเตรียมอะไรไว้ในรถเพื่อความปลอดภัยเมื่อเดินทางไกล?',opts:['แค่น้ำมันเต็มถัง','ชุดปฐมพยาบาล ไฟฉาย สายพ่วงแบต ยางอะไหล่','เฉพาะโทรศัพท์มือถือ','แค่แผนที่'],ok:1,fb:'ควรมี: ชุดปฐมพยาบาล ไฟฉาย สายพ่วงแบตเตอรี่ ยางอะไหล่ แม่แรง และน้ำดื่มสำรอง'},
+{cat:'🏠',q:'ก่อนออกจากบ้านช่วงหยุดยาวสงกรานต์ควรตรวจสอบอะไร?',opts:['เฉพาะประตูหน้า','ปิดแก๊ส ปลั๊กไฟ ประตูหน้าต่างทุกบาน','เฉพาะแก๊ส','เฉพาะไฟฟ้า'],ok:1,fb:'ปิดแก๊สที่ถัง ถอดปลั๊กไฟทีวีและเครื่องใช้ไฟฟ้า ล็อกประตูหน้าต่างทุกบาน และปิดน้ำ'},
+{cat:'🏠',q:'การโพสต์รูปสถานที่ท่องเที่ยวแบบเรียลไทม์บน Social Media มีความเสี่ยงอะไร?',opts:['ไม่มีความเสี่ยง','แจ้งโจรว่าบ้านว่างและอาจถูกโจรกรรม','ทำให้แบตหมดเร็ว','ใช้เน็ตมาก'],ok:1,fb:'การโพสต์เรียลไทม์ทำให้คนทราบว่าบ้านว่าง ควรโพสต์รูปเที่ยวหลังกลับบ้านแล้วแทน'},
+{cat:'🔥',q:'หากเกิดเพลิงไหม้ในอาคาร ควรทำอะไรก่อน?',opts:['เก็บของมีค่า','แจ้งเตือนคนในอาคารและออกทางหนีไฟ','ดับไฟเองก่อน','ปิดแอร์'],ok:1,fb:'ความปลอดภัยสำคัญที่สุด แจ้งเตือนทันที ออกทางหนีไฟ โทร 199 ห้ามใช้ลิฟต์'},
+{cat:'🔥',q:'ก๊าซหุงต้มรั่ว กลิ่นฉุนในบ้าน ควรทำอะไร?',opts:['เปิดไฟตรวจสอบ','ปิดวาล์วแก๊ส เปิดหน้าต่าง ออกจากบ้าน โทร 199','จุดไฟฟ้าดูว่ารั่วไม่','ใช้เครื่องดูดฝุ่น'],ok:1,fb:'อย่าเปิด-ปิดสวิตช์ไฟเด็ดขาด เพราะประกายไฟอาจจุดก๊าซ ปิดวาล์ว เปิดหน้าต่าง และออกทันที'},
+{cat:'👶',q:'เด็กอายุต่ำกว่ากี่ปีห้ามนั่งเบาะหน้ารถ?',opts:['5 ปี','7 ปี','10 ปี','12 ปี'],ok:2,fb:'เด็กอายุต่ำกว่า 10 ปีไม่ควรนั่งเบาะหน้า เพราะถุงลมนิรภัยอาจเป็นอันตรายต่อเด็กเล็ก'},
+{cat:'👶',q:'ห้ามทิ้งเด็กหรือสัตว์เลี้ยงไว้ในรถที่จอดกลางแดดเพราะ?',opts:['จะทำให้ร้องไห้','อุณหภูมิในรถสูงถึง 60-80°C ทำให้เสียชีวิตได้','จะทำให้รถสกปรก','ผิดมารยาท'],ok:1,fb:'รถที่จอดกลางแดด 30 นาทีอุณหภูมิภายในสูงถึง 60-80°C ทำให้เด็กหรือสัตว์เสียชีวิตได้'},
+{cat:'🌊',q:'ก่อนลงเล่นน้ำทะเลควรตรวจสอบอะไร?',opts:['ไม่ต้องตรวจสอบ','ธงสัญญาณชายหาดและสภาพคลื่น','อุณหภูมิน้ำ','จำนวนนักท่องเที่ยว'],ok:1,fb:'ธงแดง = ห้ามลงเล่นน้ำเด็ดขาด ธงเหลือง = ระวัง ธงเขียว = ปลอดภัย ต้องตรวจสอบก่อนทุกครั้ง'},
+{cat:'🌊',q:'กระแสน้ำวน (Rip Current) ที่ทะเล ควรว่ายออกอย่างไร?',opts:['ว่ายตรงเข้าหาฝั่ง','ว่ายขนานกับชายฝั่งเพื่อออกจากกระแสน้ำวน','ดำน้ำหลบ','หยุดนิ่ง'],ok:1,fb:'ว่ายขนานชายฝั่งเพื่อออกจากแนวกระแสน้ำวน การว่ายสวนกระแสตรงๆ ทำให้หมดแรงและจมน้ำ'},
+{cat:'🍔',q:'อาหารที่ทิ้งไว้กลางแจ้งในอากาศร้อนนานเท่าไหร่เริ่มเสี่ยงเชื้อโรค?',opts:['6 ชั่วโมง','4 ชั่วโมง','2 ชั่วโมง','30 นาที'],ok:2,fb:'อาหารที่อุณหภูมิ 30°C ขึ้นไปเสี่ยงเชื้อโรคภายใน 2 ชั่วโมง ควรเก็บในที่เย็นหรือกินทันที'},
+{cat:'🍔',q:'อาการอาหารเป็นพิษที่ต้องรีบพบแพทย์คืออะไร?',opts:['คลื่นไส้เล็กน้อย','ถ่ายเป็นเลือด อุจจาระร่วงรุนแรง หรืออาเจียนไม่หยุด','ปวดท้องเล็กน้อย','เบื่ออาหาร'],ok:1,fb:'ถ่ายเป็นเลือด อาเจียนไม่หยุด หรือมีไข้สูงร่วมด้วย ต้องรีบพบแพทย์หรือโทร 1669 ทันที'},
+{cat:'📱',q:'ควรชาร์จแบตโทรศัพท์ให้อยู่ที่เท่าไหร่ก่อนออกเดินทาง?',opts:['20%','50%','อย่างน้อย 80%','ไม่สำคัญ'],ok:2,fb:'ควรชาร์จให้เต็มหรืออย่างน้อย 80% และพกพาแบตสำรอง เพื่อโทรขอความช่วยเหลือได้เมื่อเกิดเหตุ'},
+{cat:'📱',q:'การใช้ GPS นำทางขณะขับรถควรทำอย่างไร?',opts:['จับโทรศัพท์ดูแผนที่','ตั้งค่าก่อนออกเดินทาง ใช้เสียงนำทาง ไม่จับโทรศัพท์ขณะขับ','ให้ผู้โดยสารถือ','ดูแผนที่ที่สัญญาณไฟแดง'],ok:1,fb:'ควรตั้งค่า GPS ก่อนออกเดินทาง เปิดเสียงนำทาง และใช้ที่วางโทรศัพท์เพื่อไม่ต้องจับขณะขับ'},
+{cat:'🎒',q:'ยาที่ควรพกติดตัวเมื่อเดินทางไกลช่วงสงกรานต์คืออะไร?',opts:['ไม่จำเป็นต้องพกยา','ยาแก้ปวด ยาแก้ท้องเสีย ยาแก้เมารถ ยาประจำตัว','เฉพาะยาสามัญประจำบ้าน','เฉพาะยาแก้ปวด'],ok:1,fb:'ควรพก: ยาแก้ปวด ยาแก้ท้องเสีย ยาแก้เมารถ ORS ยาประจำตัว และพลาสเตอร์ปิดแผล'},
+{cat:'⚡',q:'ควรระวังอะไรเป็นพิเศษเมื่อเล่นน้ำใกล้เสาไฟฟ้า?',opts:['ไม่มีอันตราย','น้ำนำไฟฟ้า อาจถูกไฟดูดได้','ทำให้เสาไฟพัง','ทำให้ไฟดับ'],ok:1,fb:'น้ำเป็นตัวนำไฟฟ้าที่ดี อย่าเล่นน้ำใกล้เสาไฟฟ้า สายไฟฟ้า หรืออุปกรณ์ไฟฟ้าเด็ดขาด'},
+{cat:'⚡',q:'อุปกรณ์ไฟฟ้าชนิดใดอันตรายที่สุดหากใช้ในที่เปียกชื้น?',opts:['โทรศัพท์มือถือ','เครื่องเป่าผม เตารีด หรือเครื่องใช้ไฟฟ้าที่ใช้ความร้อน','พัดลม','โคมไฟ'],ok:1,fb:'อุปกรณ์ที่ใช้ความร้อนมีกระแสไฟสูง อันตรายมากในที่เปียกชื้น อาจทำให้ไฟดูดเสียชีวิตได้'},
+{cat:'🚨',q:'เบอร์โทรตำรวจในประเทศไทยคือ?',opts:['199','1669','191','1554'],ok:2,fb:'191 คือเบอร์แจ้งเหตุด่วนเหตุร้ายตำรวจ โทรฟรีตลอด 24 ชั่วโมง'},
+{cat:'🚨',q:'เบอร์ดับเพลิงในประเทศไทยคือ?',opts:['191','199','1669','1554'],ok:1,fb:'199 คือเบอร์แจ้งเหตุเพลิงไหม้ โทรฟรีตลอด 24 ชั่วโมง'},
+{cat:'🚨',q:'ผู้ขับขี่ที่เมาแล้วขับและเกิดอุบัติเหตุมีผู้เสียชีวิต มีโทษอย่างไร?',opts:['ปรับเงินเท่านั้น','จำคุก 3-10 ปี และปรับสูงสุด 200,000 บาท','พักใบขับขี่','ทำทัณฑ์บน'],ok:1,fb:'โทษหนักมาก จำคุก 3-10 ปี ปรับ 60,000-200,000 บาท และอาจถูกเพิกถอนใบขับขี่ถาวร'},
+{cat:'🚨',q:'การหลบหนีหลังเกิดอุบัติเหตุมีโทษอย่างไร?',opts:['ไม่มีโทษ','จำคุกไม่เกิน 3 เดือน และปรับ','ปรับเงินอย่างเดียว','ตักเตือน'],ok:1,fb:'ผู้ขับขี่ที่ก่อให้เกิดอุบัติเหตุต้องหยุดรถและให้ความช่วยเหลือ การหลบหนีมีโทษจำคุกและปรับ'},
+{cat:'🌙',q:'เมื่อขับรถในคืนที่มีหมอกหนา ควรใช้ไฟรถแบบใด?',opts:['ไฟสูง','ไฟต่ำและไฟหมอก','ไฟฉุกเฉินกะพริบ','ไม่ต้องเปิดไฟ'],ok:1,fb:'ไฟสูงในหมอกจะสะท้อนทำให้มองไม่เห็น ให้ใช้ไฟต่ำ (Low Beam) และไฟหมอกถ้ามี'},
+{cat:'🌙',q:'ทำไมช่วงเวลา 02.00-05.00 น. จึงเกิดอุบัติเหตุมากในช่วงสงกรานต์?',opts:['จราจรหนาแน่น','ร่างกายง่วงตามธรรมชาติ และบางคนยังอยู่ในฤทธิ์แอลกอฮอล์','ถนนชำรุด','ไฟถนนไม่เพียงพอ'],ok:1,fb:'ร่างกายมนุษย์ง่วงสูงสุดช่วง 02.00-05.00 น. ตามนาฬิกาชีวิต และอาจยังมีแอลกอฮอล์ค้างในเลือด'},
+];
+
+const QS_EN=[
+{cat:'🚗',q:'What is the legal blood alcohol limit for drivers in Thailand?',opts:['20 mg%','50 mg%','80 mg%','100 mg%'],ok:1,fb:'The legal limit is 50 mg%. Exceeding this is drunk driving, punishable by up to 1 year imprisonment and a 20,000 THB fine.'},
+{cat:'🚗',q:'What is the #1 cause of accidents during Songkran?',opts:['Slippery roads','Drunk driving','Driver fatigue','Mobile phones'],ok:1,fb:'Drunk driving causes over 40% of all Songkran accidents every year.'},
+{cat:'🚗',q:'What should you do first when feeling very drowsy on a long drive?',opts:['Blast the air conditioning','Drink coffee and continue','Pull over and nap 20-30 min','Turn up the music'],ok:2,fb:'A 20-30 min power nap is the most effective solution. Caffeine only works temporarily and is not safe long-term.'},
+{cat:'🚗',q:'How often should you take a break on a long road trip?',opts:['Every 3 hours','Every 2 hours','Every 4 hours','Every 1 hour'],ok:1,fb:'Rest at least every 2 hours for 15-20 minutes to reduce fatigue-related risk.'},
+{cat:'🚗',q:'What is the fine for using a mobile phone while driving?',opts:['200 THB','400 THB','1,000 THB','500 THB'],ok:2,fb:'The fine is 1,000 THB and your license may also be suspended.'},
+{cat:'🚗',q:'Which action should you NEVER do while driving?',opts:['Check mirrors','Wear a seatbelt','Eat food','Turn on headlights'],ok:2,fb:'Eating while driving prevents you from having full control of the steering wheel.'},
+{cat:'🚗',q:'Minimum following distance at 90 km/h?',opts:['1 car length','2 car lengths','3 car lengths','5 car lengths'],ok:2,fb:'At 90 km/h, keep at least 3 car lengths (about 45 meters) from the vehicle ahead.'},
+{cat:'🚗',q:'What should you check before a long Songkran drive?',opts:['Fuel only','Tires, brakes, oil, lights & coolant','Tires only','Coolant only'],ok:1,fb:'Always check tires, brakes, engine oil, signal lights, and coolant before every long trip.'},
+{cat:'🚗',q:'What can happen to tires overheated by Songkran sun?',opts:['Brakes fail','Tire blowout','Heavy steering','AC stops working'],ok:1,fb:'Overheated tires with incorrect pressure risk blowout. Always inflate to manufacturer specs.'},
+{cat:'🚗',q:'If you or a passenger have been drinking, what should you do?',opts:['Drive slowly instead','Let a sober person drive or call a taxi','Wait a while then drive','Drink lots of water then drive'],ok:1,fb:'There is no quick way to sober up. Only a non-drinking person should drive.'},
+{cat:'🛵',q:'Which vehicle has the most Songkran fatalities?',opts:['Car','Pickup truck','Motorcycle','Bus'],ok:2,fb:'Motorcycles account for 80-85% of all Songkran fatalities every year.'},
+{cat:'🛵',q:'What must a motorcycle pillion passenger do?',opts:['Nothing special','Wear a helmet too','Hold the rider tightly','Face forward only'],ok:1,fb:'By law, pillion passengers must also wear a helmet.'},
+{cat:'🛵',q:'Maximum speed for motorcycles on general highways?',opts:['60 km/h','80 km/h','90 km/h','120 km/h'],ok:1,fb:'Motorcycles must not exceed 80 km/h on general highways.'},
+{cat:'🛵',q:'What should you do when riding a motorcycle at night with poor visibility?',opts:['Speed up to pass quickly','Turn on headlight and slow down','Ride in the middle','No change needed'],ok:1,fb:'Always turn on headlights and reduce speed to allow adequate reaction time.'},
+{cat:'🛵',q:'Where do most motorcycle accidents occur?',opts:['Straight roads','Curves','Steep hills','Intersections'],ok:3,fb:'Intersections are the most dangerous because of cross-traffic and limited visibility.'},
+{cat:'🛵',q:'Why are motorcycles banned from expressways?',opts:['Too much fuel consumption','Dangerous due to high speed and unsuitable entry/exit points','Causes traffic jams','Bad manners'],ok:1,fb:'Motorcycles are strictly prohibited on expressways due to high speeds and unsuitable road design.'},
+{cat:'🪖',q:'How much can a helmet reduce the risk of fatal head injury?',opts:['30%','50%','70%','More than 85%'],ok:3,fb:'A standard helmet reduces fatality risk by over 85% and head injury risk by 69%.'},
+{cat:'🪖',q:'How should a correct helmet fit?',opts:['Slightly loose for comfort','Snug — no wobble, no squeeze','Very tight for safety','Slight movement allowed'],ok:1,fb:'A good helmet must be snug — it should not wobble when shaken, nor cause headaches.'},
+{cat:'🪖',q:'When should you replace a helmet?',opts:['Every 10 years','When damaged or after a hard impact','When color fades','Never replace'],ok:1,fb:'Replace every 3-5 years, or immediately after a severe impact, even if no cracks are visible.'},
+{cat:'🪖',q:'What does the Thai Industrial Standard (TIS/มอก.) label on a helmet mean?',opts:['It is expensive','Passed Thai industrial safety standard tests','Made from imported materials','Only valid in Thailand'],ok:1,fb:'TIS (มอก.) certifies the helmet has passed official Thai industrial safety tests.'},
+{cat:'🪖',q:'What is the fine for not wearing a helmet?',opts:['100 THB','200 THB','300 THB','500 THB'],ok:1,fb:'Fine is 200-500 THB for both rider and passenger under the Thai Traffic Act.'},
+{cat:'💦',q:'What is the most dangerous behavior during Songkran water play?',opts:['Wearing sunglasses','Splashing water on vehicle drivers','Drinking water','Applying sunscreen'],ok:1,fb:'Splashing drivers can cause them to panic and lose control — fatal accidents have occurred.'},
+{cat:'💦',q:'Where should you stand when playing water near a road?',opts:['Middle of the road','On the sidewalk or designated safe area','Road shoulder','Traffic island'],ok:1,fb:'Always stay on the sidewalk or designated areas. Never stand on the road.'},
+{cat:'💦',q:'What hazard can ice in a water gun cause?',opts:['No hazard','Skin shock from cold, eye injury','Makes gun heavier','Water leaks'],ok:1,fb:'Ice in water guns can injure eyes and cause cold shock to skin, especially in young children.'},
+{cat:'💦',q:'What should young children wear when playing water near roads?',opts:['Swimsuit','Life vest and stay near adults at all times','Raincoat','Rain boots'],ok:1,fb:'Young children must stay close to adults at all times in areas away from roads and deep water.'},
+{cat:'💦',q:'What is the most serious risk from strong sun during Songkran?',opts:['Sunburn only','Heatstroke — can be fatal','Cooling down','Getting thirsty'],ok:1,fb:'Heatstroke is a medical emergency. Drink plenty of water, avoid direct sun, and rest in shade regularly.'},
+{cat:'🏊',q:'You find someone drowning. What is the FIRST correct step?',opts:['Jump in immediately','Call 1669 and find rescue equipment','Wait for others','Shout for them to swim up'],ok:1,fb:'Always call 1669 first. Throw something to grab (rope, ring buoy, bottle). Do not jump in if you cannot swim.'},
+{cat:'🏊',q:'A child drowns and is unconscious. What do you do before CPR?',opts:['Rush them out of water','Shake them awake','Open airway and check breathing','Give them water'],ok:2,fb:'Remove from water, lay flat, tilt head to open airway, check breathing — if not breathing, start CPR immediately.'},
+{cat:'🏊',q:'Where do most child drownings occur?',opts:['Sea','River','Ponds, pools, canals near home','Public swimming pools'],ok:2,fb:'Children most often drown in water near home — ponds, pools, canals. Use fencing and close supervision.'},
+{cat:'🏊',q:'What is the survival floating position if you fall in water?',opts:['Swim as fast as possible','Float on your back, relax, stay calm','Jump up and down to signal for help','Dive to shore'],ok:1,fb:'Back floating conserves energy and keeps you alive longer. Stay calm and wait for rescue.'},
+{cat:'🏊',q:'Why are "No Swimming" signs in rivers important?',opts:['Just a suggestion','Must be obeyed — dangerous currents and depth','For children only','Meaningless'],ok:1,fb:'These signs exist for real reasons: strong currents, whirlpools, or unpredictable depth. Always respect them.'},
+{cat:'💊',q:'Which medication causes drowsiness and should be avoided before driving?',opts:['Paracetamol','Antihistamines (allergy medicine)','Vitamin C','Antacids'],ok:1,fb:'Antihistamines (e.g., CPM) cause heavy drowsiness. Always read labels before driving.'},
+{cat:'💊',q:'What are the emergency signs of Heatstroke (not just heat exhaustion)?',opts:['Heavy sweating','Body temp over 40°C, no sweating, confusion, dizziness','Thirst','Red skin'],ok:1,fb:'Heatstroke is a medical emergency. Temp over 40°C, no sweating, possible unconsciousness — go to hospital immediately.'},
+{cat:'💊',q:'How much water should you drink daily in hot Songkran weather?',opts:['1-2 glasses','6-8 glasses','At least 8-10 glasses','Only when thirsty'],ok:2,fb:'In heat and physical activity, drink at least 8-10 glasses per day. Do not wait until thirsty.'},
+{cat:'💊',q:'How does alcohol affect driving?',opts:['Increases alertness','Reduces decision-making and slows reaction time','No effect','Improves vision'],ok:1,fb:'Alcohol impairs judgment, reduces inhibition, and slows reaction to dangerous situations.'},
+{cat:'💊',q:'What should you do if you feel nauseous during a trip?',opts:['Drink alcohol to relax','Pull over, rest, and take motion sickness medicine','Push through it','Lie down in a moving car'],ok:1,fb:'Pull over, breathe fresh air, take motion sickness medicine, or let someone else drive.'},
+{cat:'🚑',q:'What is the ambulance emergency number in Thailand?',opts:['191','199','1669','1554'],ok:2,fb:'1669 is the National EMS Center — free 24 hours, all networks.'},
+{cat:'🚑',q:'How deep should chest compressions be in CPR?',opts:['1-2 cm','3-4 cm','5-6 cm','7-8 cm'],ok:2,fb:'Compress 5-6 cm deep at 100-120 compressions/minute, allowing full chest recoil.'},
+{cat:'🚑',q:'You find an unconscious accident victim on the road. What do you do first?',opts:['Move them immediately','Call 1669 and do NOT move unless necessary','Give them water','Wait for others'],ok:1,fb:'Call 1669 immediately. Do not move them unnecessarily — they may have a spinal injury.'},
+{cat:'🚑',q:'How do you control bleeding from an open wound?',opts:['Rinse with cold water','Press with clean cloth and elevate the injured area','Apply alcohol','Let it stop on its own'],ok:1,fb:'Apply firm pressure for 10-15 minutes. Elevate above heart level. Do not lift the cloth repeatedly.'},
+{cat:'🚑',q:'What does shock from an accident look like?',opts:['Flushed, hot skin','Pale, cold, clammy skin with rapid weak pulse','Very high fever','Only a headache'],ok:1,fb:'Shock signs: pale, cold, clammy, rapid weak pulse, confusion. Call 1669, lay flat, elevate legs.'},
+{cat:'🌡️',q:'What is the normal human body temperature?',opts:['35°C','36-37°C','38-39°C','40°C'],ok:1,fb:'Normal temp is 36-37°C. Above 38°C is a fever. Above 40°C is a heatstroke emergency.'},
+{cat:'🌡️',q:'Who is most at risk from extreme heat during Songkran?',opts:['Teenagers','Elderly, young children, and those with chronic illness','Athletes','Working-age men'],ok:1,fb:'The elderly, young children, and chronically ill have reduced ability to regulate body temperature.'},
+{cat:'🌡️',q:'Best way to prevent heatstroke during Songkran?',opts:['Wear dark clothing','Drink water regularly, wear a hat, avoid direct sun','Exercise more','Take cold showers frequently'],ok:1,fb:'Drink before you feel thirsty, wear a hat and light clothing, and rest in shade when sun is intense.'},
+{cat:'🌡️',q:'Should you store medicine in a parked car on a hot day?',opts:['Yes if container is closed','No — heat destroys medicine quality','Yes if it is a tablet','Yes if in a plastic bag'],ok:1,fb:'A parked car in sunlight can reach 60-80°C, destroying medications and potentially creating toxic substances.'},
+{cat:'🌡️',q:'Which warning signs mean your body is dangerously overheated?',opts:['Normal sweating','Dizziness, nausea, hot red skin, NO sweating','Thirst','Pale skin'],ok:1,fb:'Dizziness, nausea, hot red skin and no sweating = heatstroke. Get to a cool place and call 1669 immediately.'},
+{cat:'🚦',q:'At an intersection with a flashing yellow light, you should:',opts:['Always stop and wait','Drive through freely','Slow down and proceed with caution','Ignore it'],ok:2,fb:'Flashing yellow means caution — slow down and be ready to stop if other vehicles are present.'},
+{cat:'🚦',q:'Why is overtaking on a solid yellow line illegal?',opts:['Causes traffic','Dangerous — limited visibility area','Wastes fuel','Bad manners'],ok:1,fb:'Solid lines mark areas of restricted visibility — curves, hills, etc. — where overtaking is strictly forbidden.'},
+{cat:'🚦',q:'What should you do when driving in rain?',opts:['Speed up to get through it fast','Turn on headlights, slow down, increase following distance','Use hazard lights','Drive on the right'],ok:1,fb:'Rain reduces traction and visibility. Turn on headlights, slow down, and increase your following distance.'},
+{cat:'🚦',q:'How should you brake on a wet slippery road?',opts:['Brake hard and sudden','Brake gently and gradually reduce speed','Let go of the steering wheel','Press the clutch first'],ok:1,fb:'Pump brakes gently or let ABS work. Never brake suddenly — wheels lock and the car slides.'},
+{cat:'🛣️',q:'Who should you notify before a long road trip?',opts:['No one necessary','Family or a trusted person','Police','Insurance company'],ok:1,fb:'Tell someone your route, destination, departure and estimated arrival time so they can help if something goes wrong.'},
+{cat:'🛣️',q:'Which time is most dangerous for long-distance driving?',opts:['Midday','Early morning (2-6 AM) and after meals','Evening','After midnight'],ok:1,fb:'2-6 AM is when the body is naturally most fatigued. Post-meal drowsiness also increases risk significantly.'},
+{cat:'🛣️',q:'What should you keep in your car for safety on long trips?',opts:['Just a full tank','First aid kit, flashlight, jumper cables, spare tire','Just your phone','Just a map'],ok:1,fb:'Always have: first aid kit, flashlight, jumper cables, spare tire, jack, and emergency water.'},
+{cat:'🏠',q:'Before leaving home for the Songkran holiday, you should check:',opts:['Front door only','Gas, plugs, all doors and windows','Gas only','Electricity only'],ok:1,fb:'Turn off the gas valve, unplug appliances, lock all doors and windows, and shut off water.'},
+{cat:'🏠',q:'What risk does posting real-time vacation photos on social media create?',opts:['No risk','Signals to thieves your home is empty — risk of burglary','Drains battery','Uses too much data'],ok:1,fb:'Real-time posts tell people your home is vacant. Post travel photos after you return home instead.'},
+{cat:'🔥',q:'If a fire breaks out in a building, what do you do FIRST?',opts:['Grab valuables','Alert others and exit via fire escape','Try to extinguish it yourself','Turn off AC'],ok:1,fb:'Safety first — alert everyone, exit via fire escape, call 199. Never use the elevator.'},
+{cat:'🔥',q:'You smell a gas leak at home. What should you do?',opts:['Turn on lights to check','Close the gas valve, open windows, leave, call 199','Light a match to check','Use a vacuum cleaner'],ok:1,fb:'Never switch lights on or off — sparks can ignite gas. Close valve, open windows, exit immediately.'},
+{cat:'👶',q:'Children under what age should not sit in the front seat?',opts:['5 years','7 years','10 years','12 years'],ok:2,fb:'Children under 10 should not sit in the front — airbags can be dangerous for small children.'},
+{cat:'👶',q:'Why must you never leave children or pets in a parked car in sunlight?',opts:['They will cry','Temperature can reach 60-80°C causing death','Car gets dirty','Bad manners'],ok:1,fb:'A car parked in sun for 30 minutes can reach 60-80°C — deadly for children and animals.'},
+{cat:'🌊',q:'Before entering the sea, what should you check?',opts:['Nothing','Beach flag signals and wave conditions','Water temperature','Number of tourists'],ok:1,fb:'Red flag = no swimming. Yellow = caution. Green = safe. Always check before entering.'},
+{cat:'🌊',q:'If caught in a rip current, how should you swim out?',opts:['Swim straight toward shore','Swim parallel to the shore to escape the current','Dive under','Stay still'],ok:1,fb:'Swim parallel to shore to get out of the rip current channel. Swimming against it will exhaust you.'},
+{cat:'🍔',q:'How long can food sit out in hot weather before it becomes risky?',opts:['6 hours','4 hours','2 hours','30 minutes'],ok:2,fb:'At 30°C+, food becomes risky within 2 hours. Keep it cold or eat immediately.'},
+{cat:'🍔',q:'What food poisoning symptoms require immediate medical attention?',opts:['Mild nausea','Bloody stool, severe diarrhea, or uncontrolled vomiting','Mild stomach pain','Loss of appetite'],ok:1,fb:'Bloody stool, non-stop vomiting, or high fever with these symptoms — see a doctor or call 1669 immediately.'},
+{cat:'📱',q:'How charged should your phone be before a road trip?',opts:['20%','50%','At least 80%','Does not matter'],ok:2,fb:'Charge to at least 80% (or full) and bring a power bank — you need it to call for help in emergencies.'},
+{cat:'📱',q:'How should you use GPS navigation while driving?',opts:['Hold phone and look at map','Set it before leaving, use voice guidance, no touching while driving','Have passenger hold it','Check map at red lights'],ok:1,fb:'Set GPS before driving, use voice guidance, and use a phone mount so you never touch the phone while driving.'},
+{cat:'🎒',q:'What medicines should you carry on a long Songkran trip?',opts:['No medicine needed','Painkiller, anti-diarrheal, motion sickness, personal meds','Basic medicine only','Painkillers only'],ok:1,fb:'Carry: painkillers, anti-diarrheal, motion sickness tablets, ORS, personal medication, and bandages.'},
+{cat:'⚡',q:'What must you be careful about when playing water near electric poles?',opts:['No danger','Water conducts electricity — risk of electrocution','Pole could fall','Power outage'],ok:1,fb:'Water is an excellent conductor. Never play near electric poles, cables, or electrical equipment.'},
+{cat:'⚡',q:'Which appliance is most dangerous in wet or damp conditions?',opts:['Mobile phone','Hair dryer, iron, or other high-heat appliances','Fan','Desk lamp'],ok:1,fb:'High-current heat appliances are extremely dangerous in damp conditions — can cause fatal electrocution.'},
+{cat:'🚨',q:'What is the police emergency number in Thailand?',opts:['199','1669','191','1554'],ok:2,fb:'191 is the Thai Police emergency line — free, 24 hours a day.'},
+{cat:'🚨',q:'What is the fire department emergency number in Thailand?',opts:['191','199','1669','1554'],ok:1,fb:'199 is the fire emergency line — free, 24 hours a day.'},
+{cat:'🚨',q:'Drunk driver causes a fatal accident. What is the penalty?',opts:['Fine only','3-10 years imprisonment and up to 200,000 THB fine','License suspension only','Probation'],ok:1,fb:'Severe punishment: 3-10 years prison, 60,000-200,000 THB fine, and possible permanent license revocation.'},
+{cat:'🚨',q:'What is the penalty for fleeing the scene of an accident?',opts:['No penalty','Up to 3 months imprisonment and a fine','Fine only','Warning'],ok:1,fb:'Drivers who cause accidents must stop and assist. Fleeing the scene is a criminal offense.'},
+{cat:'🌙',q:'What lights should you use when driving in thick fog?',opts:['High beam','Low beam and fog lights','Hazard lights','No lights needed'],ok:1,fb:'High beam in fog reflects back and reduces visibility. Use low beam (and fog lights if available).'},
+{cat:'🌙',q:'Why do the most Songkran accidents happen between 2-5 AM?',opts:['Heavy traffic','The body is naturally most fatigued, and some still have alcohol in their system','Road damage','Insufficient street lights'],ok:1,fb:'The human biological clock reaches peak fatigue at 2-5 AM, and alcohol from earlier may still be in the bloodstream.'},
+];
+
+function getQS(){return currentLang==='en'?QS_EN:QS_TH;}
+
+const Q_TOTAL = Q_PER_PLAYER; // จำนวนข้อต่อผู้เล่น
+const OPT_ICONS=['🔴','🔵','🟡','🟢'];
+const LANE_COLORS=['#e63946','#2196F3','#FF9800','#4CAF50','#A855F7','#FF6B35','#00B4D8','#c084fc','#2ED573','#FF4757'];
+const AVS=[{e:'🦁',n:'สิงห์'},{e:'🐯',n:'เสือ'},{e:'🦅',n:'อินทรี'},{e:'🐲',n:'มังกร'},{e:'🦊',n:'จิ้งจอก'},{e:'🐺',n:'หมาป่า'},{e:'🦋',n:'ผีเสื้อ'},{e:'🐉',n:'นาค'}];
+const MAX_SCORE=Q_PER_PLAYER*SCORE_PER_Q;
+
+/* ══════════════ PLAYER STATE ══════════════ */
+let selAv=AVS[0],empId='',myScore=0,okC=0,badC=0,curQ=0,qOrder=[],answered=false,rtChannel=null;
+let timerInterval=null,timeLeft=TIME_LIMIT;
+
+/* ══════════════ SCREEN UTILS ══════════════ */
+function showScreen(id){
+  document.querySelectorAll('#playerWrap .screen').forEach(s=>s.classList.remove('active'));
+  const el=document.getElementById(id);
+  if(el) el.classList.add('active');
+}
+
+/* ══════════════ ADMIN LOGIN ══════════════ */
+function clearPwErr(){document.getElementById('pwErr').className='err';}
+function doAdminLogin(){
+  const pw=document.getElementById('pwInp').value;
+  if(pw===ADMIN_PASSWORD){
+    document.getElementById('pwInp').value='';
+    document.getElementById('playerWrap').style.display='none';
+    document.getElementById('adminWrap').style.display='flex';
+    initAdmin();
+  } else {
+    const e=document.getElementById('pwErr');e.textContent=t('err_pw');e.className='err show';
+  }
+}
+function exitAdmin(){
+  document.getElementById('adminWrap').style.display='none';
+  document.getElementById('playerWrap').style.display='flex';
+  if(adminChannel) adminChannel.unsubscribe();
+  showScreen('sHome');
+}
+
+/* ══════════════ AVATAR ══════════════ */
+function buildAv(){
+  const g=document.getElementById('avGrid');g.innerHTML='';
+  AVS.forEach((av,i)=>{
+    const b=document.createElement('button');b.className='av-btn'+(i===0?' sel':'');
+    b.innerHTML='<span class="av-em">'+av.e+'</span><span class="av-nm">'+av.n+'</span>';
+    b.onclick=()=>{document.querySelectorAll('.av-btn').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');selAv=av;};
+    g.appendChild(b);
+  });
+}
+
+/* ══════════════ PLAYER INPUT ══════════════ */
+function onEmpInput(){
+  const v=document.getElementById('empInp').value.replace(/\D/g,'');
+  document.getElementById('empInp').value=v;
+  document.getElementById('joinBtn').disabled=v.length!==4;
+  document.getElementById('errBox').className='err';
+}
+function checkJoinBtn(){document.getElementById('joinBtn').disabled=document.getElementById('empInp').value.length!==4;}
+function showErr(m){const e=document.getElementById('errBox');e.textContent=m;e.className='err show';}
+
+/* ══════════════ JOIN ══════════════ */
+async function doJoin(){
+  const id=document.getElementById('empInp').value.trim();
+  if(id.length!==4||!/^\d{4}$/.test(id)){showErr(t('err_4digit'));return;}
+  const btn=document.getElementById('joinBtn');btn.disabled=true;btn.textContent=t('checking');
+  const{data:existing}=await sb.from('game_results').select('*').eq('emp_id',id).single();
+  if(existing){
+    empId=id;
+    document.getElementById('apId').textContent=id;
+    document.getElementById('apAv').textContent=existing.avatar||'🦁';
+    document.getElementById('apSc').textContent=existing.score;
+    const d=new Date(existing.started_at).toLocaleDateString(currentLang==='th'?'th-TH':'en-GB',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+    document.getElementById('apDate').textContent=t('played_on')+' '+d;
+    btn.disabled=false;btn.textContent=t('join_btn');
+    showScreen('sPlayed');return;
+  }
+  const{error}=await sb.from('game_results').insert({emp_id:id,avatar:selAv.e,score:0,correct:0,wrong:0,finished:false});
+  btn.disabled=false;btn.textContent=t('join_btn');
+  if(error){showErr(t('err_general'));return;}
+  empId=id;myScore=0;okC=0;badC=0;curQ=0;answered=false;
+  // โหลดเวลาที่ Admin ตั้งไว้
+  const{data:cfg}=await sb.from('game_results').select('score').eq('emp_id','_config').single();
+  timeLeft=(cfg && cfg.score>0)?cfg.score:TIME_LIMIT;
+  // สุ่ม 15 ข้อจาก 100 ข้อ ไม่ซ้ำกัน
+  const allIdx=[...Array(getQS().length).keys()];
+  for(let i=allIdx.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[allIdx[i],allIdx[j]]=[allIdx[j],allIdx[i]];}
+  qOrder=allIdx.slice(0,Q_PER_PLAYER);
+  document.getElementById('sbAv').textContent=selAv.e;
+  document.getElementById('sbName').textContent=id;
+  showScreen('sGame');
+  subscribeRT();renderQ();updateTrack();startTimer();
+}
+
+/* ══════════════ REALTIME PLAYER ══════════════ */
+let trackPollInterval=null;
+function subscribeRT(){
+  if(rtChannel)rtChannel.unsubscribe();
+  // ใช้ channel name unique ต่อ session
+  const chName='p-rt-'+Date.now();
+  rtChannel=sb.channel(chName)
+    .on('postgres_changes',{event:'*',schema:'public',table:'game_results'},()=>updateTrack())
+    .subscribe();
+  // Polling fallback ทุก 3 วินาที
+  if(trackPollInterval)clearInterval(trackPollInterval);
+  trackPollInterval=setInterval(updateTrack,3000);
+}
+function stopTrackPoll(){if(trackPollInterval){clearInterval(trackPollInterval);trackPollInterval=null;}}
+async function updateTrack(){
+  const{data}=await sb.from('game_results').select('emp_id,avatar,score,correct,finished').order('score',{ascending:false}).limit(10);
+  if(data) renderMiniTrack('trackLanes',data);
+}
+async function updateFinalTrack(){
+  const{data}=await sb.from('game_results').select('emp_id,avatar,score,correct,finished').order('score',{ascending:false}).limit(10);
+  if(!data)return;
+  renderMiniTrack('finalLanes',data);
+  const idx=data.findIndex(p=>p.emp_id===empId);
+  const rank=idx>=0?idx+1:data.length;
+  document.getElementById('finRank').textContent=rank<=3?['🥇','🥈','🥉'][rank-1]:rank;
+}
+
+function renderMiniTrack(containerId,data){
+  const el=document.getElementById(containerId);if(!el)return;el.innerHTML='';
+  const maxSc=Math.max(...data.map(d=>d.score),MAX_SCORE/10);
+  data.forEach((p,i)=>{
+    const pct=Math.max(2,(p.score/maxSc)*100);
+    const isMe=p.emp_id===empId;
+    const color=LANE_COLORS[i%LANE_COLORS.length];
+    const rank=i+1;
+    const rankIcon=rank===1?'🥇':rank===2?'🥈':rank===3?'🥉':'';
+    const empColor=isMe?'var(--gold)':'var(--water)';
+    const empWeight=isMe?'900':'700';
+    const empLabel=isMe?'⭐'+p.emp_id:p.emp_id;
+    const fillShadow=isMe?';box-shadow:0 0 8px '+color:'';
+    const scoreColor=isMe?'var(--gold)':'rgba(255,255,255,.6)';
+    const div=document.createElement('div');div.className='mt-lane';
+    div.innerHTML='<div class="mt-rank">'+(rankIcon||rank)+'</div>'
+      +'<div class="mt-emp" style="color:'+empColor+';font-weight:'+empWeight+'">'+empLabel+'</div>'
+      +'<div class="mt-track-bg"><div class="mt-fill" style="width:'+pct+'%;background:'+color+fillShadow+'"></div>'
+      +'<span class="mt-runner" style="left:'+pct+'%">'+(p.avatar||'🦁')+'</span></div>'
+      +'<div class="mt-score" style="color:'+scoreColor+'">'+p.score+'</div>';
+    el.appendChild(div);
+  });
+}
+
+function renderQ_lang(){
+  // Redraw question text & options in new language without resetting state
+  if(curQ>=Q_PER_PLAYER) return;
+  const q=getQS()[qOrder[curQ]];
+  if(!q) return;
+  document.getElementById('catB').textContent=q.cat+' Q'+(curQ+1);
+  document.getElementById('qTxt').textContent=q.q;
+  const btns=document.querySelectorAll('.opt');
+  btns.forEach((b,i)=>{
+    const span=b.querySelector('.opt-txt');
+    if(span && q.opts[i]) span.textContent=q.opts[i];
+  });
+  // update feedback bar if already answered
+  if(answered){
+    const fb=document.getElementById('fbBar');
+    const isOk=fb.classList.contains('ok');
+    fb.innerHTML='<div class="fb-title">'+(isOk?t('correct_pts'):t('wrong_ans'))+'</div>'+q.fb;
+  }
+}
+
+function renderQ(){
+  if(curQ>=Q_PER_PLAYER){finishGame();return;}
+  answered=false;
+  const q=getQS()[qOrder[curQ]];
+  const pct=Math.round(curQ/Q_PER_PLAYER*100);
+  document.getElementById('progFill').style.width=pct+'%';
+  document.getElementById('pLabel').textContent=t('q_of',{n:curQ+1,t:Q_PER_PLAYER});
+  document.getElementById('pPct').textContent=pct+'%';
+  document.getElementById('sbQL').textContent=t('q_label',{n:curQ+1,t:Q_PER_PLAYER});
+  document.getElementById('catB').textContent=q.cat+' ข้อที่ '+(curQ+1);
+  document.getElementById('qTxt').textContent=q.q;
+  const g=document.getElementById('optsG');g.innerHTML='';
+  q.opts.forEach((opt,i)=>{
+    const b=document.createElement('button');b.className='opt o'+i;
+    b.innerHTML='<span class="opt-icon">'+OPT_ICONS[i]+'</span><span class="opt-txt">'+opt+'</span>';
+    b.onclick=()=>pick(i,b);g.appendChild(b);
+  });
+  document.getElementById('fbBar').className='fb-bar';
+  document.getElementById('fbBar').innerHTML='';
+  document.getElementById('nxtBtn').className='nxt';
+  const card=document.getElementById('qCard');card.style.animation='none';card.offsetHeight;card.style.animation='sIn .4s cubic-bezier(.34,1.56,.64,1)';
+}
+async function pick(idx,btn){
+  if(answered)return;answered=true;
+  const q=getQS()[qOrder[curQ]];
+  document.querySelectorAll('.opt').forEach(b=>b.disabled=true);
+  const isOk=idx===q.ok;
+  if(isOk){btn.classList.add('correct');okC++;myScore+=1000;}
+  else{btn.classList.add('wrong');document.querySelectorAll('.opt')[q.ok].classList.add('show-correct');badC++;}
+  await sb.from('game_results').update({score:myScore,correct:okC,wrong:badC}).eq('emp_id',empId);
+  document.getElementById('sbScore').textContent=myScore;
+  const fb=document.getElementById('fbBar');
+  fb.className='fb-bar '+(isOk?'ok':'bad');
+  fb.innerHTML='<div class="fb-title">'+(isOk?t('correct_pts'):t('wrong_ans'))+'</div>'+q.fb;
+  document.getElementById('nxtBtn').className='nxt show';
+}
+function nextQ(){curQ++;renderQ();}
+/* ══════════════ TIMER ══════════════ */
+function startTimer(){
+  if(timerInterval)clearInterval(timerInterval);
+  // timeLeft ถูกตั้งแล้วใน doJoin จาก config
+  updateTimerUI();
+  timerInterval=setInterval(()=>{
+    timeLeft--;
+    updateTimerUI();
+    if(timeLeft<=0){clearInterval(timerInterval);finishGame();}
+  },1000);
+}
+function stopTimer(){if(timerInterval){clearInterval(timerInterval);timerInterval=null;}stopTrackPoll();}
+function updateTimerUI(){
+  const m=Math.floor(timeLeft/60);
+  const s=timeLeft%60;
+  const txt=m+':'+(s<10?'0':'')+s;
+  const el=document.getElementById('timerDisp');
+  if(!el)return;
+  el.textContent=txt;
+  if(timeLeft<=60){el.style.color='var(--red)';el.style.animation='timerPulse .5s ease infinite';}
+  else if(timeLeft<=180){el.style.color='var(--orange)';el.style.animation='none';}
+  else{el.style.color='var(--teal)';el.style.animation='none';}
+}
+
+async function finishGame(){
+  stopTimer();
+  await sb.from('game_results').update({score:myScore,correct:okC,wrong:badC,finished:true,finished_at:new Date().toISOString()}).eq('emp_id',empId);
+  document.getElementById('finAv').textContent=selAv.e;
+  document.getElementById('finScore').textContent=myScore+' '+t('pts');
+  document.getElementById('finOk').textContent=okC;
+  document.getElementById('finBd').textContent=badC;
+  showScreen('sFinish');
+  await updateFinalTrack();
+  if(rtChannel)rtChannel.unsubscribe();
+  rtChannel=sb.channel('p-final').on('postgres_changes',{event:'*',schema:'public',table:'game_results'},()=>updateFinalTrack()).subscribe();
+}
+
+/* ══════════════ ADMIN TIME CONTROL ══════════════ */
+let adminTimeMins=20; // ค่าเริ่มต้น 20 นาที
+
+function adminAdjTime(delta){
+  adminTimeMins=Math.max(1,Math.min(60,adminTimeMins+delta));
+  updateAdminTimeDisp();
+  saveTimeConfig();
+}
+function adminSetTime(mins){
+  adminTimeMins=mins;
+  updateAdminTimeDisp();
+  saveTimeConfig();
+}
+function updateAdminTimeDisp(){
+  const el=document.getElementById('adminTimeDisp');
+  if(el) el.textContent=adminTimeMins+':00';
+}
+async function saveTimeConfig(){
+  // บันทึกเวลาลง Supabase ใน game_results row พิเศษ _config
+  await sb.from('game_results').upsert({emp_id:'_config',score:adminTimeMins*60,correct:0,wrong:0,finished:false,avatar:'⚙️'},{onConflict:'emp_id'});
+  showToast('⏱️ ตั้งเวลา '+adminTimeMins+' นาทีแล้ว!');
+}
+async function loadTimeConfig(){
+  const{data}=await sb.from('game_results').select('score').eq('emp_id','_config').single();
+  if(data && data.score>0){
+    adminTimeMins=Math.round(data.score/60);
+    updateAdminTimeDisp();
+  }
+}
+function showToast(msg){
+  let t=document.getElementById('adminToast');
+  if(!t){t=document.createElement('div');t.id='adminToast';t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:rgba(255,215,0,.15);border:1px solid rgba(255,215,0,.4);color:var(--gold);padding:10px 20px;border-radius:99px;font-size:13px;font-weight:700;z-index:9999;transition:opacity .3s;';document.body.appendChild(t);}
+  t.textContent=msg;t.style.opacity='1';
+  clearTimeout(t._to);t._to=setTimeout(()=>{t.style.opacity='0';},2000);
+}
+let adminChannel=null,prevFinCount=0;
+function initAdmin(){
+  loadTimeConfig();
+  adminRefresh();
+  if(adminChannel)adminChannel.unsubscribe();
+  adminChannel=sb.channel('admin-rt').on('postgres_changes',{event:'*',schema:'public',table:'game_results'},()=>adminRefresh()).subscribe();
+  setInterval(adminRefresh,10000);
+}
+async function adminRefresh(){
+  const{data:raw}=await sb.from('game_results').select('*').order('score',{ascending:false}).limit(20);
+  if(!raw)return;
+  // กรอง _config row ออก
+  const data=raw.filter(d=>d.emp_id!=='_config').slice(0,10);
+  adminUpdateStats(data);
+  adminRenderTrack(data);
+  adminRenderLb(data);
+  adminRenderPodium(data);
+  checkConfetti(data);
+  const now=new Date().toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  document.getElementById('aBbTime').textContent='อัปเดต: '+now;
+  document.getElementById('aLastUpdate').textContent=now;
+}
+function adminUpdateStats(data){
+  const total=data.length,finished=data.filter(d=>d.finished).length;
+  const avg=total?Math.round(data.reduce((a,b)=>a+b.score,0)/total):0;
+  const top=total?Math.max(...data.map(d=>d.score)):0;
+  const tq=data.reduce((a,b)=>a+(b.correct||0)+(b.wrong||0),0);
+  const tok=data.reduce((a,b)=>a+(b.correct||0),0);
+  const acc=tq?Math.round(tok/tq*100):0;
+  document.getElementById('aTotal').textContent=total;
+  document.getElementById('aFinished').textContent=finished;
+  document.getElementById('aAvg').textContent=avg;
+  document.getElementById('aTop').textContent=top;
+  document.getElementById('aSg1').textContent=acc+'%';
+  document.getElementById('aSg2').textContent=total;
+}
+function adminRenderTrack(data){
+  const area=document.getElementById('aTrackArea');
+  if(!data.length){area.innerHTML='<div style="text-align:center;padding:40px;color:rgba(255,255,255,.2);font-size:13px">⏳ รอผู้เล่นเข้าร่วม...</div>';return;}
+  area.innerHTML='';
+  data.forEach((p,i)=>{
+    const pct=Math.min(97,Math.max(1,(p.score/MAX_SCORE)*95));
+    const rank=i+1;const color=LANE_COLORS[i%LANE_COLORS.length];
+    const rankIcon=rank===1?'🥇':rank===2?'🥈':rank===3?'🥉':rank;
+    const qDone=Math.min(Q_PER_PLAYER,(p.correct||0)+(p.wrong||0));
+    const lane=document.createElement('div');lane.className='lane';
+    let cps='';for(let c=10;c<100;c+=10)cps+='<div style="position:absolute;top:0;bottom:0;left:'+c+'%;width:1px;background:rgba(255,255,255,.07)"></div>';
+    lane.innerHTML='<div class="lane-rank">'+rankIcon+'</div>'
+      +'<div class="lane-info"><div class="lane-emp" title="'+p.emp_id+'">'+p.emp_id+'</div><div class="lane-pts">'+p.score+' pts</div></div>'
+      +'<div class="lane-track"><div class="track-surface"></div>'+cps
+      +'<div class="track-fill" style="width:'+pct+'%;background:linear-gradient(90deg,'+color+'88,'+color+');box-shadow:0 0 8px '+color+'66"></div>'
+      +'<div class="finish-line"></div>'
+      +'<span class="runner'+(p.finished?' finished':'')+'" style="left:'+pct+'%">'+(p.avatar||'🦁')+'</span></div>'
+      +'<div class="lane-prog">'+(p.finished?'<div class="lp-fin">✅</div>':'<div class="lp-val">'+qDone+'/'+Q_PER_PLAYER+'</div>')+'</div>';
+    area.appendChild(lane);
+    if(i<data.length-1){const sep=document.createElement('div');sep.className='lane-sep';area.appendChild(sep);}
+  });
+}
+function adminRenderLb(data){
+  const el=document.getElementById('aLbList');el.innerHTML='';
+  if(!data.length){el.innerHTML='<div style="text-align:center;padding:20px;color:rgba(255,255,255,.3);font-size:11px">รอผู้เล่น...</div>';return;}
+  data.forEach((p,i)=>{
+    const rank=i+1;const rc=rank===1?'r1':rank===2?'r2':rank===3?'r3':'';const rnc=rank<=3?'':'nr';
+    const icon=rank===1?'🥇':rank===2?'🥈':rank===3?'🥉':rank;
+    const acc=((p.correct||0)+(p.wrong||0))>0?Math.round((p.correct||0)/((p.correct||0)+(p.wrong||0))*100):0;
+    const d=document.createElement('div');d.className='lb-row '+rc;
+    d.innerHTML='<div class="lb-rn '+rnc+'">'+icon+'</div><div class="lb-av">'+(p.avatar||'🦁')+'</div>'
+      +'<div class="lb-nm"><div class="lb-emp">'+p.emp_id+(p.finished?' <span class="fin-badge">จบ</span>':'')+'</div>'
+      +'<div class="lb-sub">ถูก '+(p.correct||0)+'/'+Q_PER_PLAYER+' · '+acc+'%</div></div>'
+      +'<div class="lb-sc">'+p.score+'</div>';
+    el.appendChild(d);
+  });
+}
+function adminRenderPodium(data){
+  const finished=data.filter(d=>d.finished).sort((a,b)=>b.score-a.score);
+  const strip=document.getElementById('podiumStrip');
+  if(!finished.length){strip.className='podium-strip';return;}
+  strip.className='podium-strip show';strip.innerHTML='<div style="font-size:10px;color:var(--gold);font-weight:700;flex-shrink:0">🏆 จบแล้ว:</div>';
+  finished.slice(0,3).forEach((p,i)=>{
+    const icons=['🥇','🥈','🥉'];
+    const div=document.createElement('div');div.className='pod-item';
+    div.innerHTML='<span>'+icons[i]+'</span><span style="font-size:18px">'+(p.avatar||'🦁')+'</span><div><div style="font-size:10px;font-weight:700;color:var(--gold)">'+p.emp_id+'</div><div style="font-size:9px;color:var(--water);opacity:.7">'+p.score+' pts</div></div>';
+    strip.appendChild(div);
+    if(i<Math.min(finished.length,3)-1){const sep=document.createElement('div');sep.className='pod-sep';strip.appendChild(sep);}
+  });
+}
+function checkConfetti(data){
+  const fc=data.filter(d=>d.finished).length;
+  if(fc>prevFinCount&&fc>0)spawnConfetti();
+  prevFinCount=fc;
+}
+function spawnConfetti(){
+  const c=document.getElementById('confettiC');
+  const cols=['#FFD700','#00C9FF','#FF6B35','#2ED573','#A855F7','#FF4757'];
+  for(let i=0;i<50;i++){
+    const p=document.createElement('div');p.className='cp';
+    const col=cols[Math.floor(Math.random()*cols.length)];
+    const x=Math.random()*100,dur=1.5+Math.random()*2,delay=Math.random()*.8,sz=6+Math.random()*7;
+    p.style.cssText='left:'+x+'%;background:'+col+';width:'+sz+'px;height:'+sz+'px;border-radius:'+(Math.random()>.5?'50%':'2px')+';animation-duration:'+dur+'s;animation-delay:'+delay+'s;';
+    c.appendChild(p);setTimeout(()=>p.remove(),(dur+delay)*1000+100);
+  }
+}
+async function confirmReset(){
+  if(!confirm('⚠️ ล้างข้อมูลผู้เล่นทั้งหมด?\nการกระทำนี้ไม่สามารถย้อนกลับได้'))return;
+  await sb.from('game_results').delete().neq('emp_id','__x__');
+  prevFinCount=0;adminRefresh();
+}
+
+/* ══════════════ i18n ══════════════ */
+let currentLang='th';
+const LANG={
+  th:{
+    home_title:'สงกรานต์ปลอดภัย',
+    home_sub:'ทดสอบความรู้ความปลอดภัยช่วงสงกรานต์',
+    role_player:'ผู้เล่น',
+    role_player_desc:'เข้าร่วมทำแบบทดสอบและแข่งขันกับเพื่อน',
+    role_admin_desc:'ดูผลแบบ Real-time บนจอใหญ่',
+    admin_login_sub:'ใส่รหัสผ่านเพื่อเข้าหน้า Dashboard',
+    admin_pw_label:'รหัสผ่าน Admin',
+    admin_login_btn:'🔓 เข้าสู่ Dashboard',
+    back:'← กลับ',
+    join_title:'เข้าร่วมเกม',
+    join_sub:'กรอกรหัสพนักงานและเลือกตัวละคร',
+    emp_label:'รหัสพนักงาน (4 หลัก)',
+    av_label:'เลือกตัวละคร ✨',
+    join_btn:'▶ เริ่มเล่นเกม',
+    one_time:'1 รหัส เล่นได้ 1 ครั้งเท่านั้น',
+    already_title:'คุณเล่นแล้ว!',
+    already_note:'รหัสนี้เล่นได้เพียง',
+    already_once:'1 ครั้ง',
+    already_only:'เท่านั้น',
+    change_code:'🔄 เปลี่ยนรหัส',
+    playing:'กำลังเล่นอยู่',
+    time_label:'เวลา',
+    rank_label:'อันดับของคุณ',
+    correct_label:'ตอบถูก',
+    wrong_label:'ตอบผิด',
+    finish_msg:'💡 สงกรานต์ปลอดภัย ทุกคนกลับบ้านได้!',
+    back_home:'🏠 กลับหน้าหลัก',
+    next_btn:'ข้อถัดไป →',
+    correct_pts:'🎉 ถูกต้อง! +1,000 คะแนน',
+    wrong_ans:'❌ ยังไม่ถูกต้อง',
+    live_rank:'อันดับ Real-time',
+    final_rank:'🏆 อันดับสุดท้าย',
+    checking:'⏳ กำลังตรวจสอบ...',
+    err_4digit:'⚠️ กรุณากรอกรหัสพนักงาน 4 หลัก (ตัวเลขเท่านั้น)',
+    err_general:'⚠️ เกิดข้อผิดพลาด ลองใหม่อีกครั้ง',
+    err_pw:'⚠️ รหัสผ่านไม่ถูกต้อง',
+    pts:'คะแนน',
+    played_on:'เล่นเมื่อ:',
+    q_of:'ข้อที่ {n} จาก {t}',
+    q_label:'ข้อ {n}/{t}',
+  },
+  en:{
+    home_title:'Songkran Safety',
+    home_sub:'Test your Songkran safety knowledge',
+    role_player:'Player',
+    role_player_desc:'Join the quiz and compete with friends',
+    role_admin_desc:'View real-time results on big screen',
+    admin_login_sub:'Enter password to access Dashboard',
+    admin_pw_label:'Admin Password',
+    admin_login_btn:'🔓 Enter Dashboard',
+    back:'← Back',
+    join_title:'Join Game',
+    join_sub:'Enter your employee ID and choose a character',
+    emp_label:'Employee ID (4 digits)',
+    av_label:'Choose Character ✨',
+    join_btn:'▶ Start Game',
+    one_time:'Each ID can only play once',
+    already_title:'Already Played!',
+    already_note:'This ID can only play',
+    already_once:'1 time',
+    already_only:'',
+    change_code:'🔄 Change ID',
+    playing:'Playing',
+    time_label:'Time',
+    rank_label:'Your Rank',
+    correct_label:'Correct',
+    wrong_label:'Wrong',
+    finish_msg:'💡 Stay safe this Songkran — everyone gets home!',
+    back_home:'🏠 Back to Home',
+    next_btn:'Next →',
+    correct_pts:'🎉 Correct! +1,000 pts',
+    wrong_ans:'❌ Incorrect',
+    live_rank:'Real-time Ranking',
+    final_rank:'🏆 Final Ranking',
+    checking:'⏳ Checking...',
+    err_4digit:'⚠️ Please enter a 4-digit employee ID (numbers only)',
+    err_general:'⚠️ An error occurred. Please try again.',
+    err_pw:'⚠️ Incorrect password',
+    pts:'pts',
+    played_on:'Played:',
+    q_of:'Question {n} of {t}',
+    q_label:'Q {n}/{t}',
+  }
+};
+
+function t(key,vars={}){
+  let str=(LANG[currentLang]||LANG.th)[key]||(LANG.th[key]||key);
+  Object.keys(vars).forEach(k=>{str=str.replace('{'+k+'}',vars[k]);});
+  return str;
+}
+
+function setLang(lang){
+  currentLang=lang;
+  localStorage.setItem('lang',lang);
+  document.getElementById('btnTH').classList.toggle('active',lang==='th');
+  document.getElementById('btnEN').classList.toggle('active',lang==='en');
+  applyLang();
+  // Re-render current question if game is active
+  const gameScreen=document.getElementById('sGame');
+  if(gameScreen && gameScreen.classList.contains('active') && qOrder.length>0){
+    renderQ_lang();
+  }
+}
+
+function applyLang(){
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const key=el.getAttribute('data-i18n');
+    el.textContent=t(key);
+  });
+  // update placeholder
+  const empInp=document.getElementById('empInp');
+  if(empInp) empInp.placeholder=currentLang==='en'?'0000':'0000';
+}
+
+/* ══════════════ INIT ══════════════ */
+document.addEventListener('DOMContentLoaded',()=>{
+  buildAv();
+  const saved=localStorage.getItem('lang')||'th';
+  setLang(saved);
+});
+</script>
+</body>
+</html>
